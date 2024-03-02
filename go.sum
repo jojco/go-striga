@@ -6,6 +6,8 @@ github.com/pvainio/scd30 v0.0.3/go.mod h1:ntm5XsEBj7cpjbQHQ/ChDSvlV33yKs+bCFPXgF
 github.com/sigurn/crc8 v0.0.0-20220107193325-2243fe600f9f h1:1R9KdKjCNSd7F8iGTxIpoID9prlYH8nuNYKt0XvweHA=
 github.com/sigurn/crc8 v0.0.0-20220107193325-2243fe600f9f/go.mod h1:vQhwQ4meQEDfahT5kd61wLAF5AAeh5ZPLVI4JJ/tYo8=
 github.com/sigurn/utils v0.0.0-20190728110027-e1fefb11a144/go.mod h1:VRI4lXkrUH5Cygl6mbG1BRUfMMoT2o8BkrtBDUAm+GU=
+github.com/stianeikeland/go-rpio v4.2.0+incompatible h1:CUOlIxdJdT+H1obJPsmg8byu7jMSECLfAN9zynm5QGo=
+github.com/stianeikeland/go-rpio v4.2.0+incompatible/go.mod h1:Sh81rdJwD96E2wja2Gd7rrKM+XZ9LrwvN2w4IXrqLR8=
 periph.io/x/conn/v3 v3.6.9/go.mod h1:UqWNaPMosWmNCwtufoTSTTYhB2wXWsMRAJyo1PlxO4Q=
 periph.io/x/conn/v3 v3.6.10/go.mod h1:UqWNaPMosWmNCwtufoTSTTYhB2wXWsMRAJyo1PlxO4Q=
 periph.io/x/conn/v3 v3.7.0 h1:f1EXLn4pkf7AEWwkol2gilCNZ0ElY+bxS4WE2PQXfrA=
