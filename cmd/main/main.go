@@ -1,8 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 func helloWorld(w http.ResponseWriter, r *http.Request) {
@@ -15,12 +19,25 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", helloWorld)
 
-	connStr := ":8080"
-	server := &http.Server{
-		Addr:    connStr,
-		Handler: mux,
-	}
+	// Handle interrupt signal
+	interrupt := make(chan os.Signal, 1)
+	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
 
-	log.Fatal(server.ListenAndServe())
-	log.Println("Server listening on: ", connStr)
+	// Start HTTP server
+	server := &http.Server{Addr: ":8080", Handler: mux}
+
+	log.Default().Println("Server is listening on port 8080...")
+
+	go func() {
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			fmt.Printf("Error starting server: %s\n", err)
+		}
+	}()
+	<-interrupt
+
+	log.Default().Println("Shutting down server...")
+	if err := server.Shutdown(nil); err != nil {
+		log.Fatal(fmt.Printf("Error shutting down server: %s\n", err))
+	}
+	log.Default().Println("Server stopped.")
 }
