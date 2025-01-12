@@ -23,7 +23,7 @@ func main() {
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
 
-	// Start HTTP server test zmenz
+	// Start HTTP server test zmenz wwefwefwe
 	server := &http.Server{Addr: ":8080", Handler: mux}
 
 	log.Default().Println("Server is listening on port 8080...")
