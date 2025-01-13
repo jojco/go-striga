@@ -5,6 +5,7 @@ import (
 	"os"
 	"strconv"
 	"time"
+	"github.com/jojco/go-striga/gpio"
 )
 
 const gpioPath = "/sys/class/gpio"
