@@ -7,7 +7,7 @@ import (
 
 const (
 	gpioCommand = "gpio"
-	gpioPin     = "17" // GPIO pin number to control
+	gpioPin     = "25" // GPIO pin number to control
 )
 
 // ControlGPIO controls the state of a GPIO pin.

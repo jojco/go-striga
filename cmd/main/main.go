@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	//"web/webserver"
 )
 
 func helloWorld(w http.ResponseWriter, r *http.Request) {
@@ -23,7 +24,7 @@ func main() {
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
 
-	// Start HTTP server test zmenz wwefwefwe
+	// Start HTTP server test zmeny wwefwefwe
 	server := &http.Server{Addr: ":8080", Handler: mux}
 
 	log.Default().Println("Server is listening on port 8080...")
