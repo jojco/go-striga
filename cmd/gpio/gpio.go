@@ -5,7 +5,6 @@ import (
 	"os"
 	"strconv"
 	"time"
-	"github.com/jojco/go-striga/gpio"
 )
 
 const gpioPath = "/sys/class/gpio"
@@ -77,7 +76,7 @@ func writePin(pin int, value int) error {
 
 func main() {
 	// GPIO pin number to control
-	pin := 17
+	pin := 25
 
 	// Export GPIO pin
 	err := exportPin(pin)
