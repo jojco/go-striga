@@ -25,7 +25,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	var interval uint16 = 5
+	var interval uint16 = 10
 
 	dev.StartMeasurements(interval)
 

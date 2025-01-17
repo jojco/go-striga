@@ -76,7 +76,7 @@ func writePin(pin int, value int) error {
 
 func main() {
 	// GPIO pin number to control
-	pin := 25
+	pin := 17
 
 	// Export GPIO pin
 	err := exportPin(pin)
