@@ -45,6 +45,7 @@ func main() {
 
 		time.Sleep(2 * time.Second) // Read temperature every 2 seconds
 	}
+
 }
 
 // W1Device represents a w1 device with its ID and full path.

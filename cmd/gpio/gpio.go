@@ -76,7 +76,7 @@ func writePin(pin int, value int) error {
 
 func main() {
 	// GPIO pin number to control
-	pin := 17
+	pin := 37
 
 	// Export GPIO pin
 	err := exportPin(pin)
@@ -105,7 +105,6 @@ func main() {
 		fmt.Println("Error writing to pin:", err)
 		return
 	}
-
 	fmt.Println("Pin turned on")
 
 	// Sleep for 3 seconds
