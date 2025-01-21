@@ -1,6 +1,6 @@
 package main
 
-// testovanie dosky s tromi relé, ktoré sú priamo pripojené na zbernicu
+// testovanie dosky s tromi relé(nie I2C), ktoré sú priamo pripojené na zbernicu
 // CH1 je pin 37, CH2 je pin 38, CH3 je pin 40
 // https://www.waveshare.com/wiki/RPi_Relay_Board
 
