@@ -32,7 +32,7 @@ func main() {
 	}
 
 	// Choose a specific w1 device to read temperature from
-	sensorID := devices[0].ID // You can choose the first device for simplicity, or prompt the user to select one
+	sensorID := devices[1].ID // You can choose the first device for simplicity, or prompt the user to select one
 	fmt.Println("Reading temperature from:", sensorID)
 
 	// Read temperature from the selected device continuously

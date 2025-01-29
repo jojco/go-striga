@@ -9,30 +9,35 @@ import (
 )
 
 func main() {
-	// Otvorenie I2C zariadenia (bus 1 je pre Raspberry Pi)
-	i2c, err := i2c.NewI2C(0x20, 1) // 0x20 je bežná adresa pre I2C relé moduly
+	// Otvorí I2C zariadenie na adrese 0x20 (alebo podľa potreby uprav adresu)
+	i2c, err := i2c.NewI2C(0x20, 1) // 0x20 je I2C adresa, 1 je číslo zariadenia na Raspberry Pi (i2c-1)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Chyba pri otváraní I2C: %v", err)
 	}
 	defer i2c.Close()
 
-	// Zapnúť všetky relé (bitová maska 0xFF znamená všetky relé ON)
-	err = i2c.WriteRegByte(0x00, 0xFF) // Adresa 0x00 je pre ovládanie všetkých relé
-	if err != nil {
-		log.Fatal(err)
+	// Predpokladajme, že relé sú pripojené k 8 bitovým výstupom (0-7) na PCF8574
+	// Ak sa relé zapínajú/vypínajú na základe výstupných bitov, môžeme nastaviť tieto bity.
+	var relayState byte = 0x00 // Všetky relé vypnuté
+
+	// Cyklus na zapínanie a vypínanie relé
+	for {
+		// Zapneme všetky relé
+		relayState = 0xFF
+		err := i2c.WriteByte(relayState)
+		if err != nil {
+			log.Fatalf("Chyba pri zapísaní na I2C: %v", err)
+		}
+		fmt.Println("Relé zapnuté")
+		time.Sleep(1 * time.Second)
+
+		// Vypneme všetky relé
+		relayState = 0x00
+		err = i2c.WriteByte(relayState)
+		if err != nil {
+			log.Fatalf("Chyba pri zapísaní na I2C: %v", err)
+		}
+		fmt.Println("Relé vypnuté")
+		time.Sleep(1 * time.Second)
 	}
-	fmt.Println("Všetky relé sú zapnuté!")
-
-	// Čakanie 2 sekundy
-	time.Sleep(2 * time.Second)
-
-	// Vypnúť všetky relé
-	err = i2c.WriteRegByte(0x00, 0x00) // Vypnutie všetkých relé (0x00)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println("Všetky relé sú vypnuté!")
-
-	// Čakanie pred ukončením programu
-	time.Sleep(2 * time.Second)
 }
