@@ -11,58 +11,63 @@ import (
 	"fmt"
 	"log"
 	"time"
-	
-	"periph.io/x/periph/v3/host"
-	"periph.io/x/periph/v3/devices/i2c"
+
+	"periph.io/x/conn/v3/i2c"
+	"periph.io/x/conn/v3/i2c/i2creg"
+	"periph.io/x/host/v3"
 )
 
-const (
-	i2cAddr = 0x20 // Adresa zariadenia (napr. PCF8574)
-)
-
-// Funkcia na nastavenie stavu relé cez I2C
-func setRelayState(dev *i2c.Dev, state byte) error {
-	_, err := dev.Write([]byte{state})
-	return err
-}
+// Nastaví adresu I2C zariadenia na 0x20 (alebo podľa potreby uprav adresu)
+const i2cAddress = 0x21 // Adresa I2C zariadenia nastavená na 0x20 HEXA t.j. 32 DEC
 
 func main() {
-	// Inicializácia periph knižnice
+	// Inicializácia host systému (Raspberry Pi)
 	if _, err := host.Init(); err != nil {
-		log.Fatalf("Chyba pri inicializácii periph knižnice: %v", err)
+		log.Fatal(err)
 	}
 
-	// Otvorenie I2C busu, obvykle bus 1 na Raspberry Pi
-	bus, err := i2c.New("/dev/i2c-1") // Závisí od vášho systému, môže byť aj "/dev/i2c-0"
+	// Pripojenie na I2C bus (na Raspberry Pi je zvyčajne /dev/i2c-1)
+	bus, err := i2creg.Open("")
 	if err != nil {
-		log.Fatalf("Chyba pri otvorení I2C busu: %v", err)
+		log.Fatal(err)
 	}
 	defer bus.Close()
 
-	// Pripojenie k I2C zariadeniu (PCF8574 alebo podobné)
-	dev := &i2c.Dev{Bus: bus, Addr: i2cAddr}
+	// Vytvorenie I2C zariadenia na základe adresy
+	device := i2c.Dev{Bus: bus, Addr: i2cAddress}
 
-	// Inicializácia - nastavenie všetkých pinov na výstupy
-	if err := setRelayState(dev, 0xFF); err != nil {
-		log.Fatalf("Chyba pri nastavení výstupov: %v", err)
+	// Vypíšeme info o pripojení
+	fmt.Println("I2C zariadenie pripojené na adrese", i2cAddress)
+
+	// Zapni relé
+	if err := toggleRelay(&device, true); err != nil {
+		log.Fatal(err)
 	}
 
-	// Ovládanie relé
-	for {
-		// Zapnutie prvého relé
-		if err := setRelayState(dev, 0x01); err != nil {
-			log.Printf("Chyba pri zapnutí relé 1: %v", err)
-		} else {
-			fmt.Println("Relé 1 je zapnuté")
-		}
-		time.Sleep(1 * time.Second)
+	// Počkajte 5 sekúnd
+	time.Sleep(5 * time.Second)
 
-		// Vypnutie prvého relé
-		if err := setRelayState(dev, 0x00); err != nil {
-			log.Printf("Chyba pri vypnutí relé 1: %v", err)
-		} else {
-			fmt.Println("Relé 1 je vypnuté")
-		}
-		time.Sleep(1 * time.Second)
+	// Vypni relé
+	if err := toggleRelay(&device, false); err != nil {
+		log.Fatal(err)
 	}
+}
+
+func toggleRelay(device *i2c.Dev, state bool) error {
+	var value byte
+	if state {
+		value = 0x01 // Predpokladáme, že 0x01 zapne relé
+	} else {
+		value = 0x00 // Predpokladáme, že 0x00 vypne relé
+	}
+
+	// Zapíšeme hodnotu do zariadenia na určený register
+	// Tento príklad používá register 0x00 (skontrolujte si register podľa datasheetu)
+	_, err := device.Write([]byte{0x00, value})
+	if err != nil {
+		return fmt.Errorf("chyba pri zapise do I2C zariadenia: %v", err)
+	}
+
+	fmt.Printf("Relé je teraz na %v\n", state)
+	return nil
 }
