@@ -5,58 +5,61 @@ import (
 	"log"
 	"time"
 
-	"periph.io/x/conn/v3/i2c"
-	"periph.io/x/host/v3"
+	"github.com/d2r2/go-i2c"
+)
+
+const (
+	// I2C adresa 8-relé HAT
+	relayHatAddress = 0x26 // Prednastavená adresa pre tento modul
+	// Register, do ktorého zapisujeme na ovládanie relé
+	relayRegister = 0x00
 )
 
 func main() {
-	// Inicializácia hosta
-	if _, err := host.Init(); err != nil {
-		log.Fatal(err)
-	}
-
-	// Vyhľadanie I2C zariadenia na zbernici 1
-	// I2C zbernica 1 je obvykle predvolená na Raspberry Pi 4
-	bus, err := i2c.New("/dev/i2c-1")
+	// Otvor I2C zariadenie (0x1 pre /dev/i2c-1 na Raspberry Pi)
+	dev, err := i2c.NewI2C(relayHatAddress, 1) // 1 je číslo I2C busu (na Raspberry Pi je to zvyčajne 1)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Chyba pri otváraní zariadenia: %v\n", err)
 	}
-	defer bus.Close()
+	defer dev.Close()
 
-	// Adresa I2C zariadenia (relé / GPIO expander)
-	deviceAddr := uint16(0x20)
+	// Vytvoríme buffer na uchovávanie stavu relé (8 bitov - pre 8 relé)
+	// Počiatočne budú všetky relé vypnuté (0x00 znamená všetky relé vypnuté)
+	relayState := byte(0x00)
 
-	// Otvorenie zariadenia
-	dev := i2c.Dev{Bus: bus, Addr: deviceAddr}
+	// Striedavé zapínanie a vypínanie všetkých relé
+	for {
+		// Zapni všetky relé
+		relayState = 0xFF
+		err = setRelayState(dev, relayState)
+		if err != nil {
+			log.Fatalf("Chyba pri zapínaní relé: %v\n", err)
+		}
+		fmt.Println("Všetky relé zapnuté")
 
-	// Nastavenie GPIO pinu, ktorý ovláda relé (ak používate GPIO expander)
-	// Tento krok závisí od toho, aké zariadenie máte pripojené na I2C
-	// Povedzme, že ovládate pin 0, nastavíme ho ako výstup
-	// (Na tomto mieste by ste prispôsobili zápis podľa toho, čo relé vyžaduje)
-	err = dev.Write([]byte{0x01, 0xFF}) // Príklad: nastavte výstupy na "všetky piny vysoko"
+		// Počkajte 2 sekundy
+		time.Sleep(2 * time.Second)
+
+		// Vypni všetky relé
+		relayState = 0x00
+		err = setRelayState(dev, relayState)
+		if err != nil {
+			log.Fatalf("Chyba pri vypínaní relé: %v\n", err)
+		}
+		fmt.Println("Všetky relé vypnuté")
+
+		// Počkajte 2 sekundy
+		time.Sleep(2 * time.Second)
+	}
+}
+
+// setRelayState nastaví stav všetkých relé na zariadení cez I2C
+// relayState je 1 byte, kde každý bit reprezentuje jedno relé (1 = zapnuté, 0 = vypnuté)
+func setRelayState(dev *i2c.I2C, state byte) error {
+	// Zapíš stav do zariadenia (I2C zápis)
+	err := dev.WriteRegU8(relayRegister, state)
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("chyba pri zápise do I2C: %v", err)
 	}
-
-	// Ovládanie relé
-	// Predpokladajme, že relé je ovládané prepnutím hodnoty na príslušnom I2C byte
-	// V tomto prípade posielame hodnotu na zapnutie relé.
-	fmt.Println("Zapínam relé...")
-	err = dev.Write([]byte{0x00, 0x01}) // Tento zápis zapne relé (nastavte podľa požiadavky)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Čakanie na nejaký čas, aby ste mohli pozorovať účinok
-	time.Sleep(5 * time.Second)
-
-	// Vypnutie relé
-	fmt.Println("Vypínam relé...")
-	err = dev.Write([]byte{0x00, 0x00}) // Tento zápis vypne relé
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Program končí
-	fmt.Println("Program ukončený.")
+	return nil
 }

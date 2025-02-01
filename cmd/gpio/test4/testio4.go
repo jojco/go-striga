@@ -9,6 +9,7 @@ package main
 
 import (
 	"fmt"
+	//"go/format"
 	"log"
 	"time"
 
@@ -17,8 +18,8 @@ import (
 	"periph.io/x/host/v3"
 )
 
-// Nastaví adresu I2C zariadenia na 0x20 (alebo podľa potreby uprav adresu)
-const i2cAddress = 0x21 // Adresa I2C zariadenia nastavená na 0x20 HEXA t.j. 32 DEC
+// Nastaví adresu I2C zariadenia na 0x26 (alebo podľa potreby uprav adresu)
+const i2cAddress = 0x26 // Adresa I2C zariadenia nastavená na 0x26 HEXA t.j. 38 DEC
 
 func main() {
 	// Inicializácia host systému (Raspberry Pi)
@@ -39,17 +40,23 @@ func main() {
 	// Vypíšeme info o pripojení
 	fmt.Println("I2C zariadenie pripojené na adrese", i2cAddress)
 
-	// Zapni relé
-	if err := toggleRelay(&device, true); err != nil {
-		log.Fatal(err)
-	}
+	for i := 0; i < 50; i++ {
 
-	// Počkajte 5 sekúnd
-	time.Sleep(5 * time.Second)
+		// Zapni relé
+		if err := toggleRelay(&device, true); err != nil {
+			log.Fatal(err)
+		}
 
-	// Vypni relé
-	if err := toggleRelay(&device, false); err != nil {
-		log.Fatal(err)
+		// Počkajte 5 sekúnd
+		time.Sleep(5 * time.Second)
+
+		// Vypni relé
+		if err := toggleRelay(&device, false); err != nil {
+			log.Fatal(err)
+		}
+
+		// Počkajte 5 sekúnd
+		time.Sleep(5 * time.Second)
 	}
 }
 
