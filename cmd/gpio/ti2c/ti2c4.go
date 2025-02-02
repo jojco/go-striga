@@ -61,13 +61,13 @@ func main() {
 func turnRelayOn(i2c *i2c.I2C, relay uint8) error {
 	// Zapíše do registra byte, ktorý zodpovedá zapnutiu relé
 	// V tomto prípade sa predpokladá, že každý bit zodpovedá jednému relé
-	cmd := byte(1 << relay)   // Nastavíme bit podľa relé (napr. relé 0 = 0b00000001)
-	return i2c.WriteByte(cmd) // Zápis do I2C zariadenia
+	cmd := byte(1 << relay)    // Nastavíme bit podľa relé (napr. relé 0 = 0b00000001)
+	return i2c.WriteRegU8(cmd) // Zápis do I2C zariadenia
 }
 
 // Funkcia na vypnutie relé na určitom pine
 func turnRelayOff(i2c *i2c.I2C, relay uint8) error {
 	// Vypne relé nastavením zodpovedajúceho bitu na 0
-	cmd := byte(0)            // Vypneme všetky bity (všetky relé)
-	return i2c.WriteByte(cmd) // Zápis do I2C zariadenia
+	cmd := byte(0)             // Vypneme všetky bity (všetky relé)
+	return i2c.WriteRegU8(cmd) // Zápis do I2C zariadenia
 }
