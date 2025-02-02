@@ -3,71 +3,31 @@ package main
 import (
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/d2r2/go-i2c"
 )
 
-// Predpokladaná I2C adresa HAT-u
-const relayI2CAddress = 0x20 // Zmeň podľa skutočnej adresy
-const relayRegister = 0x00   // Zmeň podľa skutočného registra (ak je iný)
-
 func main() {
-	// Inicializácia I2C komunikácie
-	i2c, err := i2c.NewI2C(relayI2CAddress, 1)
+	// Otvorenie I2C zbernice
+	i2c, err := i2c.NewI2C(1, 0x27) // 1 je číslo zbernice a 0x20 je adresa zariadenia
 	if err != nil {
-		log.Fatal("I2C inicializácia zlyhala: ", err)
+		log.Fatal(err)
+	}
+	defer i2c.Close()
+
+	// Zápis masky do registra
+	err = i2c.WriteRegU8(0x00, 0x08)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	// Zapni relé na GPIO pin 0 (príklad)
-	err = turnRelayOn(i2c, 0)
+	fmt.Println("Všetky relé zapnuté")
+
+	// Zápis masky do registra
+	err = i2c.WriteRegU8(0x00, 0x00)
 	if err != nil {
-		log.Fatal("Chyba pri zapínaní relé: ", err)
+		log.Fatal(err)
 	}
-	fmt.Println("Relé 0 zapnuté.")
 
-	// Počkaj 3 sekundy
-	time.Sleep(3 * time.Second)
-
-	// Vypni relé na GPIO pin 0
-	err = turnRelayOff(i2c, 0)
-	if err != nil {
-		log.Fatal("Chyba pri vypínaní relé: ", err)
-	}
-	fmt.Println("Relé 0 vypnuté.")
-
-	// Počkaj ďalšie 3 sekundy
-	time.Sleep(3 * time.Second)
-
-	// Zapni relé 1 (príklad)
-	err = turnRelayOn(i2c, 1)
-	if err != nil {
-		log.Fatal("Chyba pri zapínaní relé: ", err)
-	}
-	fmt.Println("Relé 1 zapnuté.")
-
-	// Počkaj 3 sekundy
-	time.Sleep(3 * time.Second)
-
-	// Vypni relé 1
-	err = turnRelayOff(i2c, 1)
-	if err != nil {
-		log.Fatal("Chyba pri vypínaní relé: ", err)
-	}
-	fmt.Println("Relé 1 vypnuté.")
-}
-
-// Funkcia na zapnutie relé na určitom pine
-func turnRelayOn(i2c *i2c.I2C, relay uint8) error {
-	// Zapíše do registra byte, ktorý zodpovedá zapnutiu relé
-	// V tomto prípade sa predpokladá, že každý bit zodpovedá jednému relé
-	cmd := byte(1 << relay)    // Nastavíme bit podľa relé (napr. relé 0 = 0b00000001)
-	return i2c.WriteRegU8(cmd) // Zápis do I2C zariadenia
-}
-
-// Funkcia na vypnutie relé na určitom pine
-func turnRelayOff(i2c *i2c.I2C, relay uint8) error {
-	// Vypne relé nastavením zodpovedajúceho bitu na 0
-	cmd := byte(0)             // Vypneme všetky bity (všetky relé)
-	return i2c.WriteRegU8(cmd) // Zápis do I2C zariadenia
+	fmt.Println("Všetky relé vypnuté")
 }

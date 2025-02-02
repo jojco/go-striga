@@ -1,41 +1,36 @@
-// relay/relay.go
-package relay
+package main
 
 import (
 	"fmt"
+	"log"
+	"time"
 
-	"github.com/stianeikeland/go-rpio"
+	"github.com/d2r2/go-i2c"
 )
 
-const relayPin = 17 // GPIO pin na Raspberry Pi, ktorý ovláda relé (môžeš zmeniť podľa potreby)
-
-// Inicializácia GPIO pinov
-func InitRelay() error {
-	err := rpio.Open()
+func main() {
+	// Otvorenie I2C zbernice
+	i2c, err := i2c.NewI2C(1, 0x20) // 1 je číslo zbernice a 0x20 je adresa zariadenia
 	if err != nil {
-		return fmt.Errorf("Chyba pri otváraní GPIO: %v", err)
+		log.Fatal(err)
+	}
+	defer i2c.Close()
+
+	// Zapnutie relé č. 4
+	err = i2c.WriteReg(0x00, []byte{0x08}) // 0x08 je maska pre zapnutie relé č. 4 (0b00001000)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	// Nastavenie GPIO pinu pre relé ako výstup
-	pin := rpio.Pin(relayPin)
-	pin.Output()
+	fmt.Println("Relé č. 4 zapnuté")
 
-	return nil
-}
+	time.Sleep(1 * time.Second) // Relé zostane zapnuté 1 sekundu
 
-// Zapnutie relé
-func TurnRelayOn() {
-	pin := rpio.Pin(relayPin)
-	pin.High() // Nastaví pin na "vysokú" hodnotu (relé sa zapne)
-}
+	// Vypnutie relé č. 4
+	err = i2c.WriteReg(0x00, []byte{0x00}) // 0x00 je maska pre vypnutie všetkých relé
+	if err != nil {
+		log.Fatal(err)
+	}
 
-// Vypnutie relé
-func TurnRelayOff() {
-	pin := rpio.Pin(relayPin)
-	pin.Low() // Nastaví pin na "nízku" hodnotu (relé sa vypne)
-}
-
-// Zavretie GPIO pri ukončení
-func CloseRelay() {
-	rpio.Close()
+	fmt.Println("Relé č. 4 vypnuté")
 }

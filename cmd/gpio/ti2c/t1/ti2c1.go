@@ -30,7 +30,7 @@ func main() {
 	// Striedavé zapínanie a vypínanie všetkých relé
 	for {
 		// Zapni všetky relé
-		relayState = 0xFF
+		relayState = byte(0xFF)
 		err = setRelayState(dev, relayState)
 		if err != nil {
 			log.Fatalf("Chyba pri zapínaní relé: %v\n", err)
@@ -41,7 +41,7 @@ func main() {
 		time.Sleep(2 * time.Second)
 
 		// Vypni všetky relé
-		relayState = 0x00
+		relayState = byte(0x00)
 		err = setRelayState(dev, relayState)
 		if err != nil {
 			log.Fatalf("Chyba pri vypínaní relé: %v\n", err)
