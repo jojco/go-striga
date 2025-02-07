@@ -12,10 +12,6 @@ github.com/sigurn/crc8 v0.0.0-20220107193325-2243fe600f9f h1:1R9KdKjCNSd7F8iGTxI
 github.com/sigurn/crc8 v0.0.0-20220107193325-2243fe600f9f/go.mod h1:vQhwQ4meQEDfahT5kd61wLAF5AAeh5ZPLVI4JJ/tYo8=
 github.com/stianeikeland/go-rpio v4.2.0+incompatible h1:CUOlIxdJdT+H1obJPsmg8byu7jMSECLfAN9zynm5QGo=
 github.com/stianeikeland/go-rpio v4.2.0+incompatible/go.mod h1:Sh81rdJwD96E2wja2Gd7rrKM+XZ9LrwvN2w4IXrqLR8=
-github.com/thinkingcow/sprinkler-timer v0.0.0-20210514162849-58d9655e0082 h1:qV4xcyEuN6lHXE4RD6RICEsA+o/9V/sLVGNVtVQSn6s=
-github.com/thinkingcow/sprinkler-timer v0.0.0-20210514162849-58d9655e0082/go.mod h1:USnHhl1c9o0DPHp9P2VNp3SCnvmAjJeK70GLh3VKDnM=
-golang.org/x/sys v0.0.0-20210426230700-d19ff857e887 h1:dXfMednGJh/SUUFjTLsWJz3P+TQt9qnR11GgeI3vWKs=
-golang.org/x/sys v0.0.0-20210426230700-d19ff857e887/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 periph.io/x/conn/v3 v3.7.1 h1:tMjNv3WO8jEz/ePuXl7y++2zYi8LsQ5otbmqGKy3Myg=
 periph.io/x/conn/v3 v3.7.1/go.mod h1:c+HCVjkzbf09XzcqZu/t+U8Ss/2QuJj0jgRF6Nye838=
 periph.io/x/host/v3 v3.8.3 h1:v90ozCFDWgEyfNElZ+JnOvq0jAdW0vmgjCUy8dYXDds=
