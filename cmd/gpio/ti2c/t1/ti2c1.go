@@ -10,9 +10,9 @@ import (
 
 const (
 	// I2C adresa 8-relé HAT
-	relayHatAddress = 0x26 // Prednastavená adresa pre tento modul
+	relayHatAddress = 0x27 // 0x27Prednastavená adresa pre tento modul
 	// Register, do ktorého zapisujeme na ovládanie relé
-	relayRegister = 0x00
+	relayRegister = 0x01
 )
 
 func main() {
