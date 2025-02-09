@@ -20,7 +20,7 @@ import (
 
 // Nastaví adresu I2C zariadenia na 0x26 (alebo podľa potreby uprav adresu)
 const i2cAddress = 0x26 // Adresa I2C zariadenia nastavená na 0x26 HEXA t.j. 38 DEC
-const bus = 0x01
+//const bus = 0x01
 
 func main() {
 	// Inicializácia host systému (Raspberry Pi)
@@ -41,7 +41,7 @@ func main() {
 	// Vypíšeme info o pripojení
 	fmt.Println("I2C zariadenie pripojené na adrese", i2cAddress)
 
-	for i := 0; i < 50; i++ {
+	for i := 0; i < 4; i++ {
 
 		// Zapni relé
 		if err := toggleRelay(&device, true); err != nil { //jojco err má svoje císlo chyby a ak nie je chyba tak je nil
@@ -58,13 +58,14 @@ func main() {
 
 		// Počkajte 5 sekúnd
 		time.Sleep(5 * time.Second)
+
 	}
 }
 
 func toggleRelay(device *i2c.Dev, state bool) error {
 	var value byte
 	if state {
-		value = 0xFF // Predpokladáme, že 0x01 zapne relé
+		value = 0x16 // Predpokladáme, že 0x01 zapne relé
 	} else {
 		value = 0x00 // Predpokladáme, že 0x00 vypne relé
 	}
