@@ -10,9 +10,9 @@ import (
 
 const (
 	// I2C adresa 8-relé HAT
-	relayHatAddress = 0x27 // 0x27Prednastavená adresa pre tento modul
+	relayHatAddress = 0x26 // 0x27 je 0slo; 0x26 je 1.slot relé
 	// Register, do ktorého zapisujeme na ovládanie relé raz ide 0x01 a potom 0x03
-	relayRegister = 0x03
+	relayRegister = 0x01
 )
 
 func main() {
@@ -30,7 +30,7 @@ func main() {
 	// Striedavé zapínanie a vypínanie všetkých relé
 	for {
 		// Zapni všetky relé
-		relayState = byte(0xFF)
+		relayState = byte(0x40)
 		err = setRelayState(dev, relayState)
 		if err != nil {
 			log.Fatalf("Chyba pri zapínaní relé: %v\n", err)

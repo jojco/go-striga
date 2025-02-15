@@ -17,7 +17,7 @@ func main() {
 	defer i2c.Close()
 
 	// Zápis masky do registra
-	err = i2c.WriteRegU8(0x01, 0x08) //rele 6
+	err = i2c.WriteRegU8(0x03, 0x08) //do registra 0x01 zapísane cislo 0x08
 	if err != nil {
 		log.Fatal(err)
 	}

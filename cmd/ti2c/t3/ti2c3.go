@@ -4,6 +4,17 @@
 // i2c_dev                16384  0
 // sudo apt-get install libbcm2835-dev
 // go get -u periph.io/x/periph
+// skúškou cez i2cset -y 1 0x26(0x27)adrdosky  0x01register1  0x01 relé1
+// 0x01 Relé 1
+// 0x04 Relé 2
+// 0x04 Relé 3
+// 0x10 Relé 4
+// 0x20 Relé 5
+// 0x80 Relé 6
+// 0x08 Relé 7
+// 0x02 Relé 8
+// 0x00 všetky relé vypnuté
+// 0xFF všetky relé zapnuté
 
 package main
 
@@ -41,33 +52,36 @@ func main() {
 	// Vypíšeme info o pripojení
 	fmt.Println("I2C zariadenie pripojené na adrese", i2cAddress)
 
-	for i := 0; i < 4; i++ {
+	var arr = [8]byte{1, 4, 64, 16, 32, 128, 8, 2} // Pole s 8 prvkami
 
+	for i := 0; i < 8; i++ {
+
+		var rele byte = arr[i]
 		// Zapni relé
-		if err := toggleRelay(&device, true); err != nil { //jojco err má svoje císlo chyby a ak nie je chyba tak je nil
+		if err := toggleRelay(&device, true, rele); err != nil { //jojco: err má vždy návratovú chybu rôznu od 0=nil; ak nie je chyba, tak je nil
 			log.Fatal(err)
 		}
 
 		// Počkajte 5 sekúnd
-		time.Sleep(5 * time.Second)
+		time.Sleep(2 * time.Second)
 
 		// Vypni relé
-		if err := toggleRelay(&device, false); err != nil {
+		if err := toggleRelay(&device, false, 0); err != nil {
 			log.Fatal(err)
 		}
 
 		// Počkajte 5 sekúnd
-		time.Sleep(5 * time.Second)
+		time.Sleep(2 * time.Second)
 
 	}
 }
 
-func toggleRelay(device *i2c.Dev, state bool) error {
+func toggleRelay(device *i2c.Dev, state bool, ktorerele byte) error {
 	var value byte
 	if state {
-		value = 0x16 // Predpokladáme, že 0x01 zapne relé
+		value = ktorerele // Predpokladáme, že 0x01 zapne relé
 	} else {
-		value = 0x00 // Predpokladáme, že 0x00 vypne relé
+		value = ktorerele // Predpokladáme, že 0x00 vypne relé
 	}
 
 	// Zapíšeme hodnotu do zariadenia na určený register
