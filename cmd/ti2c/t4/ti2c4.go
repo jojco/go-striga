@@ -17,7 +17,7 @@ func main() {
 	defer i2c.Close()
 
 	// Zápis masky do registra
-	err = i2c.WriteRegU8(0x03, 0x08) //do registra 0x01 zapísane cislo 0x08
+	err = i2c.WriteRegU8(0x01, 0x16) //do registra 0x01 zapísane cislo 0x08
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -25,7 +25,7 @@ func main() {
 	fmt.Println("Všetky relé zapnuté")
 
 	// Počkajte 5 sekúnd
-	time.Sleep(5 * time.Second)
+	time.Sleep(2 * time.Second)
 
 	// Zápis masky do registra
 	err = i2c.WriteRegU8(0x01, 0x00)

@@ -48,6 +48,10 @@ func main() {
 
 	// Vytvorenie I2C zariadenia na základe adresy
 	device := i2c.Dev{Bus: bus, Addr: i2cAddress}
+	//
+	device.Write([]byte{0x01, 0})
+	device.Write([]byte{0x02, 0})
+	device.Write([]byte{0x03, 0})
 
 	// Vypíšeme info o pripojení
 	fmt.Println("I2C zariadenie pripojené na adrese", i2cAddress)
@@ -57,12 +61,13 @@ func main() {
 	for i := 0; i < 8; i++ {
 
 		var rele byte = arr[i]
+		fmt.Println("Relé", i+1)
 		// Zapni relé
 		if err := toggleRelay(&device, true, rele); err != nil { //jojco: err má vždy návratovú chybu rôznu od 0=nil; ak nie je chyba, tak je nil
 			log.Fatal(err)
 		}
 
-		// Počkajte 5 sekúnd
+		// Počkajte 2 sekúnd
 		time.Sleep(2 * time.Second)
 
 		// Vypni relé
@@ -70,7 +75,7 @@ func main() {
 			log.Fatal(err)
 		}
 
-		// Počkajte 5 sekúnd
+		// Počkajte 2 sekúnd
 		time.Sleep(2 * time.Second)
 
 	}
@@ -78,8 +83,9 @@ func main() {
 
 func toggleRelay(device *i2c.Dev, state bool, ktorerele byte) error {
 	var value byte
+
 	if state {
-		value = ktorerele // Predpokladáme, že 0x01 zapne relé
+		value = ktorerele // ktorerele je číslo podľa zistenia...čísla v poli   arr
 	} else {
 		value = ktorerele // Predpokladáme, že 0x00 vypne relé
 	}
@@ -91,6 +97,6 @@ func toggleRelay(device *i2c.Dev, state bool, ktorerele byte) error {
 		return fmt.Errorf("chyba pri zapise do I2C zariadenia: %v", err)
 	}
 
-	fmt.Printf("Relé je teraz na %v\n", state)
+	fmt.Printf("je teraz  %v\n", state)
 	return nil
 }
