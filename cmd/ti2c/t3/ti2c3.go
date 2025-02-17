@@ -7,7 +7,7 @@
 // skúškou cez i2cset -y 1 0x26(0x27)adrdosky  0x01register1  0x01 relé1
 // 0x01 Relé 1
 // 0x04 Relé 2
-// 0x04 Relé 3
+// 0x40 Relé 3
 // 0x10 Relé 4
 // 0x20 Relé 5
 // 0x80 Relé 6
@@ -30,7 +30,7 @@ import (
 )
 
 // Nastaví adresu I2C zariadenia na 0x26 (alebo podľa potreby uprav adresu)
-const i2cAddress = 0x26 // Adresa I2C zariadenia nastavená na 0x26 HEXA t.j. 38 DEC
+var i2cAddress uint16 = 0x26 // Adresa I2C zariadenia nastavená na 0x26 HEXA t.j. 38 DEC
 //const bus = 0x01
 
 func main() {
@@ -46,38 +46,43 @@ func main() {
 	}
 	defer bus.Close()
 
-	// Vytvorenie I2C zariadenia na základe adresy
-	device := i2c.Dev{Bus: bus, Addr: i2cAddress}
-	//
-	device.Write([]byte{0x01, 0})
-	device.Write([]byte{0x02, 0})
-	device.Write([]byte{0x03, 0})
+	for j := 0; j < 2; j++ {
 
-	// Vypíšeme info o pripojení
-	fmt.Println("I2C zariadenie pripojené na adrese", i2cAddress)
+		// Vytvorenie I2C zariadenia na základe adresy
+		device := i2c.Dev{Bus: bus, Addr: i2cAddress}
+		//
 
-	var arr = [8]byte{1, 4, 64, 16, 32, 128, 8, 2} // Pole s 8 prvkami
+		device.Write([]byte{0x01, 0}) //vynulovanie registra na doske
+		device.Write([]byte{0x02, 0}) //vynulovanie registra na doske
+		device.Write([]byte{0x03, 0}) //vynulovanie registra na doske
 
-	for i := 0; i < 8; i++ {
+		// Vypíšeme info o pripojení
+		fmt.Println("I2C zariadenie pripojené na adrese", i2cAddress)
 
-		var rele byte = arr[i]
-		fmt.Println("Relé", i+1)
-		// Zapni relé
-		if err := toggleRelay(&device, true, rele); err != nil { //jojco: err má vždy návratovú chybu rôznu od 0=nil; ak nie je chyba, tak je nil
-			log.Fatal(err)
+		var arr = [8]byte{1, 4, 64, 16, 32, 128, 8, 2} // Pole s 8 prvkami
+
+		for i := 0; i < 8; i++ {
+
+			var rele byte = arr[i]
+			fmt.Println("Relé", i+1)
+			// Zapni relé
+			if err := toggleRelay(&device, true, rele); err != nil { //jojco: err má vždy návratovú chybu rôznu od 0=nil; ak nie je chyba, tak je nil
+				log.Fatal(err)
+			}
+
+			// Počkajte 2 sekúnd
+			time.Sleep(1 * time.Second)
+
+			// Vypni relé
+			if err := toggleRelay(&device, false, 0); err != nil {
+				log.Fatal(err)
+			}
+
+			// Počkajte 2 sekúnd
+			time.Sleep(1 * time.Second)
+
 		}
-
-		// Počkajte 2 sekúnd
-		time.Sleep(2 * time.Second)
-
-		// Vypni relé
-		if err := toggleRelay(&device, false, 0); err != nil {
-			log.Fatal(err)
-		}
-
-		// Počkajte 2 sekúnd
-		time.Sleep(2 * time.Second)
-
+		i2cAddress = i2cAddress + 1
 	}
 }
 
