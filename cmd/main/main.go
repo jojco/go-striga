@@ -11,7 +11,8 @@ import (
 )
 
 func helloWorld(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello, World!"))
+	w.Write([]byte("Welcome to Striga pages!"))
+
 }
 
 func main() {
@@ -41,4 +42,5 @@ func main() {
 		log.Fatal(fmt.Printf("Error shutting down server: %s\n", err))
 	}
 	log.Default().Println("Server stopped.")
+
 }

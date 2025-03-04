@@ -1,4 +1,4 @@
-package main
+package teplota
 
 import (
 	"fmt"
@@ -12,9 +12,9 @@ import (
 
 const w1DevicesDir = "/sys/bus/w1/devices/"
 
-//var Tpole[16] float32
+var Tpole [16]float32
 
-func main() {
+func teplomer() {
 	// List all w1 devices
 	devices, err := listW1Devices()
 	if err != nil {
