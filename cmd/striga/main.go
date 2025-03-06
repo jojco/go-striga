@@ -7,11 +7,10 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	//"web/webserver"
 )
 
 func helloWorld(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Welcome to Striga pages!"))
+	w.Write([]byte("Welcome to Striga page!"))
 
 }
 

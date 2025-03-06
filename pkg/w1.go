@@ -1,4 +1,4 @@
-package main
+package pw1
 
 import (
 	"fmt"
@@ -12,9 +12,7 @@ import (
 
 const w1DevicesDir = "/sys/bus/w1/devices/"
 
-//var Tpole[16] float32
-
-func main() {
+func w1() {
 	// List all w1 devices
 	devices, err := listW1Devices()
 	if err != nil {
@@ -34,14 +32,16 @@ func main() {
 	}
 
 	// Choose a specific w1 device to read temperature from
-	sensorID := devices[1].ID // You can choose the first device for simplicity, or prompt the user to select one
+	sensorID := devices[0].ID // You can choose the first device for simplicity, or prompt the user to select one
 	fmt.Println("Reading temperature from:", sensorID)
 
 	// Read temperature from the selected device continuously
 	for {
 		temp, err := readTemperature(sensorID)
 		if err != nil {
-			log.Fatal(err)
+			log.Printf("Chyba pri čítaní teploty zo senzora %s: %v\n", sensorID, err)
+			time.Sleep(2 * time.Second) // Po chybe počkáme 2 sekundy a ideme ďalej
+			continue                    // Preskočíme zvyšok tela cyklu a ideme na ďalšiu iteráciu
 		}
 		fmt.Printf("Temperature from %s: %.2f°C\n", sensorID, temp)
 
