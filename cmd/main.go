@@ -14,11 +14,17 @@ func helloWorld(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func helloWorld2(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("2"))
+
+}
+
 func main() {
 	log.Println("Starting go-stringa ...")
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", helloWorld)
+	mux.HandleFunc("/2", helloWorld2)
 
 	// Handle interrupt signal
 	interrupt := make(chan os.Signal, 1)

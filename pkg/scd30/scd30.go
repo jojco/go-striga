@@ -1,15 +1,14 @@
-package main
+package pkg2
 
 import (
 	"log"
 	"time"
 
-	"github.com/pvainio/scd30"
 	"periph.io/x/conn/v3/i2c/i2creg"
 	"periph.io/x/host/v3"
 )
 
-func main() {
+func scd30() {
 	if _, err := host.Init(); err != nil {
 		log.Fatal(err)
 	}
