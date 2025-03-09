@@ -1,5 +1,9 @@
 github.com/jonboulle/clockwork v0.4.0 h1:p4Cf1aMWXnXAUh8lVfewRBx1zaTSYKrKMF2g3ST4RZ4=
 github.com/jonboulle/clockwork v0.4.0/go.mod h1:xgRqUGwRcjKCO1vbZUEtSLrqKoPSsUpK7fnezOII0kc=
+github.com/pvainio/scd30 v0.0.3 h1:d9InG3RZ+ioqRB9pgXPqrXThkH/XokARZRWD6yxLDyw=
+github.com/pvainio/scd30 v0.0.3/go.mod h1:ntm5XsEBj7cpjbQHQ/ChDSvlV33yKs+bCFPXgFxHVTc=
+github.com/sigurn/crc8 v0.0.0-20220107193325-2243fe600f9f h1:1R9KdKjCNSd7F8iGTxIpoID9prlYH8nuNYKt0XvweHA=
+github.com/sigurn/crc8 v0.0.0-20220107193325-2243fe600f9f/go.mod h1:vQhwQ4meQEDfahT5kd61wLAF5AAeh5ZPLVI4JJ/tYo8=
 periph.io/x/conn/v3 v3.7.1 h1:tMjNv3WO8jEz/ePuXl7y++2zYi8LsQ5otbmqGKy3Myg=
 periph.io/x/conn/v3 v3.7.1/go.mod h1:c+HCVjkzbf09XzcqZu/t+U8Ss/2QuJj0jgRF6Nye838=
 periph.io/x/host/v3 v3.8.3 h1:v90ozCFDWgEyfNElZ+JnOvq0jAdW0vmgjCUy8dYXDds=

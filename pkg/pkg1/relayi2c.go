@@ -16,7 +16,7 @@
 // 0x00 všetky relé vypnuté
 // 0xFF všetky relé zapnuté
 
-package pkg2
+package pkg1
 
 import (
 	"fmt"
@@ -33,7 +33,7 @@ import (
 var i2cAddress uint16 = 0x26 // Adresa I2C zariadenia nastavená na 0x26 HEXA t.j. 38 DEC
 //const bus = 0x01
 
-func relayi2c() {
+func rele() {
 	// Inicializácia host systému (Raspberry Pi)
 	if _, err := host.Init(); err != nil {
 		log.Fatal(err)

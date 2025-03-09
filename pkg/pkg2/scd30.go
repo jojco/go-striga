@@ -4,11 +4,12 @@ import (
 	"log"
 	"time"
 
+	"github.com/pvainio/scd30"
 	"periph.io/x/conn/v3/i2c/i2creg"
 	"periph.io/x/host/v3"
 )
 
-func scd30() {
+func udajescd30() {
 	if _, err := host.Init(); err != nil {
 		log.Fatal(err)
 	}

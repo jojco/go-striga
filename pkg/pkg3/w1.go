@@ -1,4 +1,4 @@
-package pw1
+package pkg3
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ import (
 
 const w1DevicesDir = "/sys/bus/w1/devices/"
 
-func w1() {
+func teploty() {
 	// List all w1 devices
 	devices, err := listW1Devices()
 	if err != nil {

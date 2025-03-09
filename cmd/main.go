@@ -22,6 +22,9 @@ func helloWorld2(w http.ResponseWriter, r *http.Request) {
 func main() {
 	log.Println("Starting go-stringa ...")
 
+	pkg3.teploty()
+	pkg2.udajescd30()
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", helloWorld)
 	mux.HandleFunc("/2", helloWorld2)
