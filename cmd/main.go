@@ -1,3 +1,7 @@
+//"github.com/jojco/go-striga/pkg/pkg2"
+//"github.com/jojco/go-striga/pkg/pkg3"
+//"github.com/jojco/go-striga/pkg/pkg1"
+
 package main
 
 import (
@@ -24,6 +28,7 @@ func main() {
 
 	pkg3.teploty()
 	pkg2.udajescd30()
+	pkg1.rele()
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", helloWorld)
