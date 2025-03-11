@@ -12,7 +12,7 @@ import (
 
 const w1DevicesDir = "/sys/bus/w1/devices/"
 
-func teploty() {
+func Meranieteploty() {
 	// List all w1 devices
 	devices, err := listW1Devices()
 	if err != nil {
@@ -36,17 +36,16 @@ func teploty() {
 	fmt.Println("Reading temperature from:", sensorID)
 
 	// Read temperature from the selected device continuously
-	for {
-		temp, err := readTemperature(sensorID)
-		if err != nil {
-			log.Printf("Chyba pri čítaní teploty zo senzora %s: %v\n", sensorID, err)
-			time.Sleep(2 * time.Second) // Po chybe počkáme 2 sekundy a ideme ďalej
-			continue                    // Preskočíme zvyšok tela cyklu a ideme na ďalšiu iteráciu
-		}
-		fmt.Printf("Temperature from %s: %.2f°C\n", sensorID, temp)
 
-		time.Sleep(2 * time.Second) // Read temperature every 2 seconds
+	temp, err := readTemperature(sensorID)
+	if err != nil {
+		log.Printf("Chyba pri čítaní teploty zo senzora %s: %v\n", sensorID, err)
+		time.Sleep(2 * time.Second) // Po chybe počkáme 2 sekundy a ideme ďalej
+		//continue                    // Preskočíme zvyšok tela cyklu a ideme na ďalšiu iteráciu
 	}
+	fmt.Printf("Temperature from %s: %.2f°C\n", sensorID, temp)
+
+	time.Sleep(2 * time.Second) // Read temperature every 2 seconds
 
 }
 

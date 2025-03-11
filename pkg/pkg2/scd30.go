@@ -9,7 +9,7 @@ import (
 	"periph.io/x/host/v3"
 )
 
-func udajescd30() {
+func Udajescd30() {
 	if _, err := host.Init(); err != nil {
 		log.Fatal(err)
 	}
@@ -29,19 +29,19 @@ func udajescd30() {
 
 	dev.StartMeasurements(interval)
 
-	for {
-		time.Sleep(time.Duration(interval) * time.Second)
-		if hasMeasurement, err := dev.HasMeasurement(); err != nil {
-			log.Fatalf("error %v", err)
-		} else if !hasMeasurement {
-			return
-		}
-
-		m, err := dev.GetMeasurement()
-		if err != nil {
-			log.Fatalf("error %v", err)
-		}
-
-		log.Printf("Got measure %f ppm %f%% %fC", m.CO2, m.Humidity, m.Temperature)
+	//meranie len 1x
+	time.Sleep(time.Duration(interval) * time.Second)
+	if hasMeasurement, err := dev.HasMeasurement(); err != nil {
+		log.Fatalf("error %v", err)
+	} else if !hasMeasurement {
+		return
 	}
+
+	m, err := dev.GetMeasurement()
+	if err != nil {
+		log.Fatalf("error %v", err)
+	}
+
+	log.Printf("Got measure %f ppm %f%% %fC", m.CO2, m.Humidity, m.Temperature)
+
 }
