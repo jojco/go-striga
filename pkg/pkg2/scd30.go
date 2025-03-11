@@ -9,7 +9,7 @@ import (
 	"periph.io/x/host/v3"
 )
 
-func Udajescd30() {
+func Udajezscd30() {
 	if _, err := host.Init(); err != nil {
 		log.Fatal(err)
 	}
