@@ -1,0 +1,14 @@
+{
+    "devices": [
+      {
+        "ID": "28-0000000010d7",
+        "Path": "/sys/bus/w1/devices/28-0000000010d7",
+        "location": "t1UK"
+      },
+      {
+        "ID": "28-0d97941d66",
+        "Path": "/sys/bus/w1/devices/28-00d97941d66",
+        "location": "t2UK"
+      }
+    ]
+  }

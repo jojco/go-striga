@@ -22,9 +22,23 @@ func DbStriga() {
 	}
 	defer db.Close()
 
-	// Vytvorenie tabuľky, ak neexistuje
+	// Vytvorenie tabuľky teplôt, ak neexistuje
 	_, err = db.Exec(`
                 CREATE TABLE IF NOT EXISTS teploty (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        sensorid   TEXT// Device ID
+						hodnota REAL,
+                        cas DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+        `)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Vytvorenie tabuľky vlhkosti, ak neexistuje
+	_, err = db.Exec(`
+                CREATE TABLE IF NOT EXISTS vlhkost (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         hodnota REAL,
                         cas DATETIME DEFAULT CURRENT_TIMESTAMP

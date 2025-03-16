@@ -1,3 +1,5 @@
+github.com/eiannone/keyboard v0.0.0-20220611211555-0d226195f203 h1:XBBHcIb256gUJtLmY22n99HaZTz+r2Z51xUPi01m3wg=
+github.com/eiannone/keyboard v0.0.0-20220611211555-0d226195f203/go.mod h1:E1jcSv8FaEny+OP/5k9UxZVw9YFWGj7eI4KR/iOBqCg=
 github.com/jonboulle/clockwork v0.4.0 h1:p4Cf1aMWXnXAUh8lVfewRBx1zaTSYKrKMF2g3ST4RZ4=
 github.com/jonboulle/clockwork v0.4.0/go.mod h1:xgRqUGwRcjKCO1vbZUEtSLrqKoPSsUpK7fnezOII0kc=
 github.com/mattn/go-sqlite3 v1.14.24 h1:tpSp2G2KyMnnQu99ngJ47EIkWVmliIizyZBfPrBWDRM=
@@ -6,6 +8,10 @@ github.com/pvainio/scd30 v0.0.3 h1:d9InG3RZ+ioqRB9pgXPqrXThkH/XokARZRWD6yxLDyw=
 github.com/pvainio/scd30 v0.0.3/go.mod h1:ntm5XsEBj7cpjbQHQ/ChDSvlV33yKs+bCFPXgFxHVTc=
 github.com/sigurn/crc8 v0.0.0-20220107193325-2243fe600f9f h1:1R9KdKjCNSd7F8iGTxIpoID9prlYH8nuNYKt0XvweHA=
 github.com/sigurn/crc8 v0.0.0-20220107193325-2243fe600f9f/go.mod h1:vQhwQ4meQEDfahT5kd61wLAF5AAeh5ZPLVI4JJ/tYo8=
+github.com/stianeikeland/go-rpio/v4 v4.6.0 h1:eAJgtw3jTtvn/CqwbC82ntcS+dtzUTgo5qlZKe677EY=
+github.com/stianeikeland/go-rpio/v4 v4.6.0/go.mod h1:A3GvHxC1Om5zaId+HqB3HKqx4K/AqeckxB7qRjxMK7o=
+golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a h1:dGzPydgVsqGcTRVwiLJ1jVbufYwmzD3LfVPLKsKg+0k=
+golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 periph.io/x/conn/v3 v3.7.1 h1:tMjNv3WO8jEz/ePuXl7y++2zYi8LsQ5otbmqGKy3Myg=
 periph.io/x/conn/v3 v3.7.1/go.mod h1:c+HCVjkzbf09XzcqZu/t+U8Ss/2QuJj0jgRF6Nye838=
 periph.io/x/host/v3 v3.8.3 h1:v90ozCFDWgEyfNElZ+JnOvq0jAdW0vmgjCUy8dYXDds=
