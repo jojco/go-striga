@@ -6,25 +6,45 @@ import (
 	"encoding/json"
 	"fmt"
 
-	//"log"
+	//"internal/stringslite"
+	"log"
 	"os"
-	//"path/filepath"
-	//"strconv"
-	//"strings"
+	"path/filepath"
+	"strconv"
+	"strings"
 	"time"
 )
+
+const w1DevicesDir = "/sys/bus/w1/devices/"
 
 type W1Device struct {
 	ID       string `json:"id"`
 	Path     string `json:"path"`
-	Location string `json:"location"` // čo sa meria
+	Location string `json:"location"` // čo meria teplomer
 }
 
 type Config struct {
 	Devices []W1Device `json:"devices"`
 }
 
-func InitW1() {
+func loadConfig(filename string) (Config, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return Config{}, err
+	}
+	defer file.Close()
+
+	var config Config
+	decoder := json.NewDecoder(file)
+	err = decoder.Decode(&config)
+	if err != nil {
+		return Config{}, err
+	}
+	return config, nil
+}
+
+func InitMeranieTeploty() {
+	var sensorID string
 	//Načítanie konfiguračného súboru
 	config, err := loadConfig("config_w1.json")
 	if err != nil {
@@ -37,35 +57,29 @@ func InitW1() {
 		fmt.Println("Path:", device.Path)
 		fmt.Println("Location:", device.Location)
 		fmt.Println("---") // Oddeľovač pre lepšiu čitateľnosť
+
+		sensorID := device.ID[0] // You can choose the first device for simplicity, or prompt the user to select one
+		fmt.Println("Reading temperature from:", sensorID)
 	}
 
-}
+	// Načítanie hodnôt z teplomerov do databázy
 
-func Meranieteploty() {
+	// Read temperature from the selected device continuously
 
-	/*
-		// Načítanie hodnôt z teplomerov
-
-		sensorID := W1Device[0].ID // You can choose the first device for simplicity, or prompt the user to select one
-		fmt.Println("Reading temperature from:", sensorID)
-
-		// Read temperature from the selected device continuously
-
-		temp, err := readTemperature(sensorID)
-		if err != nil {
-			log.Printf("Chyba pri čítaní teploty zo senzora %s: %v\n", sensorID, err)
-			time.Sleep(2 * time.Second) // Po chybe počkáme 2 sekundy a ideme ďalej
-			//continue                    // Preskočíme zvyšok tela cyklu a ideme na ďalšiu iteráciu
-		}
-		fmt.Printf("Temperature from %s: %.2f°C\n", sensorID, temp)
-	*/
+	temp, err := ReadTemperature(sensorID)
+	if err != nil {
+		log.Printf("Chyba pri čítaní teploty zo senzora %s: %v\n", sensorID, err)
+		time.Sleep(2 * time.Second) // Po chybe počkáme 2 sekundy a ideme ďalej
+		//continue                    // Preskočíme zvyšok tela cyklu a ideme na ďalšiu iteráciu
+	}
+	fmt.Printf("Temperature from %s: %.2f°C\n", sensorID, temp)
 
 	time.Sleep(2 * time.Second) // Read temperature every 2 seconds
 
 }
 
-/* readTemperature reads the temperature from the specified w1 device.
-func readTemperature(sensorID string) (float64, error) {
+// readTemperature reads the temperature from the specified w1 device.
+func ReadTemperature(sensorID string) (float64, error) {
 	filename := filepath.Join(w1DevicesDir, sensorID, "temperature")
 	data, err := os.ReadFile(filename)
 	if err != nil {
@@ -79,12 +93,12 @@ func readTemperature(sensorID string) (float64, error) {
 	}
 
 	return tempValue / 1000.0, nil
-}*/
+}
 
 // ----------------------------------------------------------
 // funkciu môžeš zavolať na vyhľadanie pripojených teplomerov
 // implementovať do "servisný mód"
-func NajdiTeplomery() {
+func NajdiTeplomer() {
 	//List all w1 devices
 	devices, err := listW1Devices()
 	if err != nil {
@@ -101,10 +115,10 @@ func NajdiTeplomery() {
 		fmt.Println("Device path:", device.Path)
 		fmt.Println("Device ID:", device.ID)
 		fmt.Println()
-	}*/
+	}
 }
 
-/*listW1Devices lists all w1 devices available in the /sys/bus/w1/devices/ directory.
+// listW1Devices lists all w1 devices available in the /sys/bus/w1/devices/ directory.
 func listW1Devices() ([]W1Device, error) {
 	dir, err := os.Open(w1DevicesDir)
 	if err != nil {
@@ -130,20 +144,4 @@ func listW1Devices() ([]W1Device, error) {
 	}
 	return w1Devices, nil
 
-}*/
-
-func loadConfig(filename string) (Config, error) {
-	file, err := os.Open(filename)
-	if err != nil {
-		return Config{}, err
-	}
-	defer file.Close()
-
-	var config Config
-	decoder := json.NewDecoder(file)
-	err = decoder.Decode(&config)
-	if err != nil {
-		return Config{}, err
-	}
-	return config, nil
 }

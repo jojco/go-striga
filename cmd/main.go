@@ -21,8 +21,7 @@ import (
 func main() {
 	//Inicializácia modulov
 	pkg1.InitRele()
-	pkg3.InitW1()
-
+	pkg3.InitMeranieTeploty()
 	//Táto časť má umožniť
 	//za behu programu spustiť servisný mód stlačením S
 	//za behu programu ukončiť program stlačením Q
@@ -60,7 +59,7 @@ func main() {
 			fmt.Println("Hlavný program beží...")
 
 			pkg2.Udajezscd30()
-			pkg3.Meranieteploty()
+			//pkg3.ReadTemperature()
 			pkg1.OvladanieRele()
 			webserver.Webserverstriga()
 			dbstriga.DbStriga()
@@ -73,7 +72,7 @@ func main() {
 func serviceMode() {
 	fmt.Println("Servisný režim aktivovaný.")
 	// Tu môžete pridať kód pre servisný režim
-	pkg3.NajdiTeplomery()
+	pkg3.InitMeranieTeploty()
 	pkg1.TestRele()
 	time.Sleep(2 * time.Second) // Simulácia práce v servisnom režime
 	fmt.Println("Servisný režim ukončený. Návrat do hlavnej slučky.")
