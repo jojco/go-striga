@@ -3,6 +3,7 @@ package pkg3
 // Zoznam teplomerov a umiestnenie je v súbore configw1.json
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 
@@ -12,7 +13,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"time"
+	//"time"
 )
 
 const w1DevicesDir = "/sys/bus/w1/devices/"
@@ -20,11 +21,61 @@ const w1DevicesDir = "/sys/bus/w1/devices/"
 type W1Device struct {
 	ID       string `json:"id"`
 	Path     string `json:"path"`
-	Location string `json:"location"` // čo meria teplomer
+	Location string `json:"location"` // umiestnenie teplomera(UK,TUV,VT a pod.)
 }
 
 type Config struct {
 	Devices []W1Device `json:"devices"`
+}
+
+// ************************************************************
+// vytvorenie databázy teplomerov na rýchly prístup
+func VytvorDBTeplomery() {
+	//Načítanie konfiguračného súboru teplomerov do databázy
+	config, err := loadConfig("config_w1.json")
+	if err != nil {
+		fmt.Println("Chyba pri načítaní konfigurácie:", err)
+		return
+	}
+	// Tlač obsahu súboru config_w1.json
+	for _, device := range config.Devices {
+		fmt.Println("obsah súboru config_w1.json") //
+		fmt.Println("ID:", device.ID)
+		fmt.Println("Path:", device.Path)
+		fmt.Println("Location:", device.Location)
+		fmt.Println("---") // Oddeľovač pre lepšiu čitateľnosť
+	}
+	// Otvorenie alebo vytvorenie databázy SQLite3
+	db, err := sql.Open("sqlite3", "./config_w1.db")
+	if err != nil {
+		log.Fatalf("Chyba pri otvorení databázy: %v", err)
+	}
+	defer db.Close()
+	// Vytvorenie tabuľky, ak neexistuje
+	_, err = db.Exec(`
+			CREATE TABLE IF NOT EXISTS config_w1 (
+					id TEXT PRIMARY KEY,
+					path TEXT,
+					location TEXT
+			)
+	`)
+
+	if err != nil {
+		log.Fatalf("Chyba pri vytváraní tabuľky: %v", err)
+	}
+	// Vloženie dát z JSON do databázy
+	for _, device := range config.Devices {
+		_, err = db.Exec(
+			"INSERT INTO config_w1 (id, path, location) VALUES (?, ?, ?)",
+			device.ID, device.Path, device.Location,
+		)
+		if err != nil {
+			log.Printf("Chyba pri vkladaní dát: %v", err)
+		}
+	}
+
+	fmt.Println("Dáta úspešne uložené do databázy.")
+
 }
 
 func loadConfig(filename string) (Config, error) {
@@ -43,41 +94,7 @@ func loadConfig(filename string) (Config, error) {
 	return config, nil
 }
 
-func InitMeranieTeploty() {
-	var sensorID string
-	//Načítanie konfiguračného súboru
-	config, err := loadConfig("config_w1.json")
-	if err != nil {
-		fmt.Println("Chyba pri načítaní konfigurácie:", err)
-		return
-	}
-
-	for _, device := range config.Devices {
-		fmt.Println("ID:", device.ID)
-		fmt.Println("Path:", device.Path)
-		fmt.Println("Location:", device.Location)
-		fmt.Println("---") // Oddeľovač pre lepšiu čitateľnosť
-
-		sensorID := device.ID[0] // You can choose the first device for simplicity, or prompt the user to select one
-		fmt.Println("Reading temperature from:", sensorID)
-	}
-
-	// Načítanie hodnôt z teplomerov do databázy
-
-	// Read temperature from the selected device continuously
-
-	temp, err := ReadTemperature(sensorID)
-	if err != nil {
-		log.Printf("Chyba pri čítaní teploty zo senzora %s: %v\n", sensorID, err)
-		time.Sleep(2 * time.Second) // Po chybe počkáme 2 sekundy a ideme ďalej
-		//continue                    // Preskočíme zvyšok tela cyklu a ideme na ďalšiu iteráciu
-	}
-	fmt.Printf("Temperature from %s: %.2f°C\n", sensorID, temp)
-
-	time.Sleep(2 * time.Second) // Read temperature every 2 seconds
-
-}
-
+// ********************************************************************
 // readTemperature reads the temperature from the specified w1 device.
 func ReadTemperature(sensorID string) (float64, error) {
 	filename := filepath.Join(w1DevicesDir, sensorID, "temperature")
@@ -97,7 +114,7 @@ func ReadTemperature(sensorID string) (float64, error) {
 
 // ----------------------------------------------------------
 // funkciu môžeš zavolať na vyhľadanie pripojených teplomerov
-// implementovať do "servisný mód"
+// nutné implementovať do "servisný mód"
 func NajdiTeplomer() {
 	//List all w1 devices
 	devices, err := listW1Devices()

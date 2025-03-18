@@ -20,8 +20,8 @@ import (
 
 func main() {
 	//Inicializácia modulov
-	pkg1.InitRele()
-	pkg3.InitMeranieTeploty()
+	pkg1.InitRele()          //načítanie súboru config_rele.json a uloženie do databázy
+	pkg3.VytvorDBTeplomery() //načítanie súboru config_w1.json a uloženie údajov do databázy
 	//Táto časť má umožniť
 	//za behu programu spustiť servisný mód stlačením S
 	//za behu programu ukončiť program stlačením Q
@@ -72,7 +72,7 @@ func main() {
 func serviceMode() {
 	fmt.Println("Servisný režim aktivovaný.")
 	// Tu môžete pridať kód pre servisný režim
-	pkg3.InitMeranieTeploty()
+	pkg3.NajdiTeplomer()
 	pkg1.TestRele()
 	time.Sleep(2 * time.Second) // Simulácia práce v servisnom režime
 	fmt.Println("Servisný režim ukončený. Návrat do hlavnej slučky.")
