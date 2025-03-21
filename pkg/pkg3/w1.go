@@ -13,19 +13,26 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	//"time"
+	"time"
 )
 
 const w1DevicesDir = "/sys/bus/w1/devices/"
 
 type W1Device struct {
-	ID       string `json:"id"`
+	SensorID string `json:"sensorid"`
 	Path     string `json:"path"`
 	Location string `json:"location"` // umiestnenie teplomera(UK,TUV,VT a pod.)
 }
 
 type Config struct {
 	Devices []W1Device `json:"devices"`
+}
+
+type TemperatureData struct {
+	SensorID    string
+	Location    string
+	Temperature float64
+	Timestamp   time.Time
 }
 
 // ************************************************************
@@ -40,21 +47,21 @@ func VytvorDBTeplomery() {
 	// Tlač obsahu súboru config_w1.json
 	for _, device := range config.Devices {
 		fmt.Println("obsah súboru config_w1.json") //
-		fmt.Println("ID:", device.ID)
+		fmt.Println("SensorID:", device.SensorID)
 		fmt.Println("Path:", device.Path)
 		fmt.Println("Location:", device.Location)
 		fmt.Println("---") // Oddeľovač pre lepšiu čitateľnosť
 	}
 	// Otvorenie alebo vytvorenie databázy SQLite3
-	db, err := sql.Open("sqlite3", "./config_w1.db")
+	db, err := sql.Open("sqlite3", "./w1.db")
 	if err != nil {
 		log.Fatalf("Chyba pri otvorení databázy: %v", err)
 	}
 	defer db.Close()
 	// Vytvorenie tabuľky, ak neexistuje
 	_, err = db.Exec(`
-			CREATE TABLE IF NOT EXISTS config_w1 (
-					id TEXT PRIMARY KEY,
+			CREATE TABLE IF NOT EXISTS w1 (
+					sensorid TEXT,
 					path TEXT,
 					location TEXT
 			)
@@ -66,8 +73,8 @@ func VytvorDBTeplomery() {
 	// Vloženie dát z JSON do databázy
 	for _, device := range config.Devices {
 		_, err = db.Exec(
-			"INSERT INTO config_w1 (id, path, location) VALUES (?, ?, ?)",
-			device.ID, device.Path, device.Location,
+			"INSERT INTO w1 (sensorid, path, location) VALUES (?, ?, ?)",
+			device.SensorID, device.Path, device.Location,
 		)
 		if err != nil {
 			log.Printf("Chyba pri vkladaní dát: %v", err)
@@ -96,7 +103,22 @@ func loadConfig(filename string) (Config, error) {
 
 // ********************************************************************
 // readTemperature reads the temperature from the specified w1 device.
-func ReadTemperature(sensorID string) (float64, error) {
+func ReadTemperature(location string) (TemperatureData, error) {
+
+	query := "SELECT sensorid FROM w1 WHERE location = ?"
+	row := w1.QueryRow(query, location)
+
+	var sensorID string
+	err := row.Scan(&sensorID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", fmt.Errorf("Žiadny senzor nenájdený pre location: %s", location)
+		}
+		return "", err
+	}
+
+	return sensorID, nil
+
 	filename := filepath.Join(w1DevicesDir, sensorID, "temperature")
 	data, err := os.ReadFile(filename)
 	if err != nil {
@@ -109,12 +131,21 @@ func ReadTemperature(sensorID string) (float64, error) {
 		return 0, err
 	}
 
-	return tempValue / 1000.0, nil
+	//return tempValue / 1000.0, nil
+
+	return TemperatureData{
+		SensorID:    sensorID,
+		Location:    location,
+		Temperature: temperature,
+		Timestamp:   timestamp,
+	}, nil
+
 }
 
-// ----------------------------------------------------------
+// ***************************************************************
 // funkciu môžeš zavolať na vyhľadanie pripojených teplomerov
-// nutné implementovať do "servisný mód"
+// určené pre servisný mód
+// ***************************************************************
 func NajdiTeplomer() {
 	//List all w1 devices
 	devices, err := listW1Devices()
@@ -130,7 +161,7 @@ func NajdiTeplomer() {
 	fmt.Println("Found w1 devices:")
 	for _, device := range devices {
 		fmt.Println("Device path:", device.Path)
-		fmt.Println("Device ID:", device.ID)
+		fmt.Println("Device ID:", device.SensorID)
 		fmt.Println()
 	}
 }
@@ -154,8 +185,8 @@ func listW1Devices() ([]W1Device, error) {
 		if strings.HasPrefix(name, "28-") {
 			devicePath := filepath.Join(w1DevicesDir, name)
 			w1Devices = append(w1Devices, W1Device{
-				ID:   name,
-				Path: devicePath,
+				SensorID: name,
+				Path:     devicePath,
 			})
 		}
 	}
