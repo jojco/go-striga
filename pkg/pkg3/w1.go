@@ -6,12 +6,11 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-
-	//"internal/stringslite"
 	"log"
 	"os"
 	"path/filepath"
-	"strconv"
+
+	//"strconv"
 	"strings"
 	"time"
 )
@@ -31,14 +30,15 @@ type Config struct {
 type TemperatureData struct {
 	SensorID    string
 	Location    string
-	Temperature float64
+	Temperature float32
 	Timestamp   time.Time
 }
 
 // ************************************************************
 // vytvorenie databázy teplomerov na rýchly prístup
+// ************************************************************
 func VytvorDBTeplomery() {
-	//Načítanie konfiguračného súboru teplomerov do databázy
+	//Načítanie zoznamu teplomerov zo súboru json do databázy
 	config, err := loadConfig("config_w1.json")
 	if err != nil {
 		fmt.Println("Chyba pri načítaní konfigurácie:", err)
@@ -53,14 +53,14 @@ func VytvorDBTeplomery() {
 		fmt.Println("---") // Oddeľovač pre lepšiu čitateľnosť
 	}
 	// Otvorenie alebo vytvorenie databázy SQLite3
-	db, err := sql.Open("sqlite3", "./w1.db")
+	db, err := sql.Open("sqlite3", "./config_w1.db")
 	if err != nil {
 		log.Fatalf("Chyba pri otvorení databázy: %v", err)
 	}
-	defer db.Close()
+	//defer db.Close() // zabezpečí zatvorenie db po ukončení funkcie ale ja chcem aby bola prístupná počas chodu programu
 	// Vytvorenie tabuľky, ak neexistuje
 	_, err = db.Exec(`
-			CREATE TABLE IF NOT EXISTS w1 (
+			CREATE TABLE IF NOT EXISTS config_w1 (
 					sensorid TEXT,
 					path TEXT,
 					location TEXT
@@ -73,7 +73,7 @@ func VytvorDBTeplomery() {
 	// Vloženie dát z JSON do databázy
 	for _, device := range config.Devices {
 		_, err = db.Exec(
-			"INSERT INTO w1 (sensorid, path, location) VALUES (?, ?, ?)",
+			"INSERT INTO config_w1 (sensorid, path, location) VALUES (?, ?, ?)",
 			device.SensorID, device.Path, device.Location,
 		)
 		if err != nil {
@@ -102,42 +102,17 @@ func loadConfig(filename string) (Config, error) {
 }
 
 // ********************************************************************
-// readTemperature reads the temperature from the specified w1 device.
+// readTemperature reads the temperature from the specified w1 device
+// ********************************************************************
 func ReadTemperature(location string) (TemperatureData, error) {
-
-	query := "SELECT sensorid FROM w1 WHERE location = ?"
-	row := w1.QueryRow(query, location)
-
-	var sensorID string
-	err := row.Scan(&sensorID)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return "", fmt.Errorf("Žiadny senzor nenájdený pre location: %s", location)
-		}
-		return "", err
-	}
-
-	return sensorID, nil
-
-	filename := filepath.Join(w1DevicesDir, sensorID, "temperature")
-	data, err := os.ReadFile(filename)
-	if err != nil {
-		return 0, err
-	}
-
-	tempStr := string(data)
-	tempValue, err := strconv.ParseFloat(strings.TrimSpace(tempStr), 64)
-	if err != nil {
-		return 0, err
-	}
 
 	//return tempValue / 1000.0, nil
 
 	return TemperatureData{
-		SensorID:    sensorID,
-		Location:    location,
-		Temperature: temperature,
-		Timestamp:   timestamp,
+		SensorID:    "28-44444444",
+		Location:    "t1UK",
+		Temperature: 55.0,
+		Timestamp:   time.Now(),
 	}, nil
 
 }

@@ -1,6 +1,5 @@
 //Hlavný program
 //Obsahuje aj servisný mód
-//
 
 package main
 
@@ -13,7 +12,6 @@ import (
 	"github.com/eiannone/keyboard"
 	_ "github.com/mattn/go-sqlite3" // Import ovládača SQLite
 
-	dbstriga "github.com/jojco/go-striga/db"
 	"github.com/jojco/go-striga/pkg/pkg1"
 	"github.com/jojco/go-striga/pkg/pkg2"
 	"github.com/jojco/go-striga/pkg/pkg3"
@@ -77,22 +75,20 @@ func main() {
 // Načítanie údajov zo senzorov	a uloženie do databáz
 // ***********************************************************************
 func nacitanieUdajov() {
-	pkg2.Udajezscd30()
-	//pkg3.ReadTemperature()
-	pkg1.OvladanieRele()
-	webserver.Webserverstriga()
-	dbstriga.DbStriga()
-	pkg4.DInput()
+	fmt.Println("Spustená funkcia načítania údajov")
+	co2, vlhkost, teplota := pkg2.Udajezscd30()
+	fmt.Printf("CO2: %f, Vlhkosť: %f, Teplota: %f\n", co2, vlhkost, teplota)
 
-	// Volanie funkcie ReadTemperature na location a uloženie do databázy
+	// Volanie funkcie ReadTemperature a uloženie do databázy
 	location := "t1UK"
 	temperatureData, err := pkg3.ReadTemperature(location)
 	if err != nil {
 		log.Fatal(err)
 	}
+	
 
 	// Otvorenie alebo vytvorenie databázy SQLite3
-	db, err := sql.Open("sqlite3", "./config_w1.db")
+	db, err := sql.Open("sqlite3", "./w1.db")
 	if err != nil {
 		log.Fatalf("Chyba pri otvorení databázy: %v", err)
 	}
@@ -100,7 +96,7 @@ func nacitanieUdajov() {
 
 	// Vytvorenie tabuľky, ak neexistuje
 	_, err = db.Exec(`
-	 	CREATE TABLE IF NOT EXISTS w1_devices (
+	 	CREATE TABLE IF NOT EXISTS w1 (
 			 sensorid TEXT PRIMARY KEY,
 			 path TEXT,
 			 location TEXT
@@ -120,6 +116,11 @@ func nacitanieUdajov() {
 	}
 
 	fmt.Println("Data inserted successfully")
+
+	pkg1.OvladanieRele()
+	webserver.Webserverstriga()
+	pkg4.DInput()
+
 }
 
 // ***********************************************************************

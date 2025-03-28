@@ -9,7 +9,15 @@ import (
 	"periph.io/x/host/v3"
 )
 
-func Udajezscd30() {
+type Merania struct {
+	CO2         float32
+	Humidity    float32
+	Temperature float32
+}
+
+var m Merania
+
+func Udajezscd30() (float32, float32, float32) {
 	if _, err := host.Init(); err != nil {
 		log.Fatal(err)
 	}
@@ -34,7 +42,7 @@ func Udajezscd30() {
 	if hasMeasurement, err := dev.HasMeasurement(); err != nil {
 		log.Fatalf("error %v", err)
 	} else if !hasMeasurement {
-		return
+		return 0, 0, 0
 	}
 
 	m, err := dev.GetMeasurement()
@@ -42,6 +50,7 @@ func Udajezscd30() {
 		log.Fatalf("error %v", err)
 	}
 
-	log.Printf("Got measure %f ppm %f%% %fC", m.CO2, m.Humidity, m.Temperature)
+	//log.Printf("Got measure %f ppm %f%% %fC", m.CO2, m.Humidity, m.Temperature)
 
+	return m.CO2, m.Humidity, m.Temperature
 }
