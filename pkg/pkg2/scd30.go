@@ -15,7 +15,7 @@ type Merania struct {
 	Temperature float32
 }
 
-var m Merania
+//var m Merania
 
 func Udajezscd30() (float32, float32, float32) {
 	if _, err := host.Init(); err != nil {

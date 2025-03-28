@@ -85,7 +85,6 @@ func nacitanieUdajov() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	
 
 	// Otvorenie alebo vytvorenie databázy SQLite3
 	db, err := sql.Open("sqlite3", "./w1.db")
@@ -117,7 +116,6 @@ func nacitanieUdajov() {
 
 	fmt.Println("Data inserted successfully")
 
-	pkg1.OvladanieRele()
 	webserver.Webserverstriga()
 	pkg4.DInput()
 
@@ -158,7 +156,9 @@ func serviceMode() {
 	fmt.Println("Servisný režim aktivovaný.")
 	// Tu môžete pridať kód pre servisný režim
 	pkg3.NajdiTeplomer()
-	pkg1.TestRele()
+	pkg1.TestReleAll()
+	pkg1.TestReleIndividual()
 	time.Sleep(2 * time.Second) // Simulácia práce v servisnom režime
 	fmt.Println("Servisný režim ukončený. Návrat do hlavnej slučky.")
+
 }

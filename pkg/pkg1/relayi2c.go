@@ -22,7 +22,11 @@ package pkg1
 import (
 	"fmt"
 	//"go/format"
+	"bufio"
 	"log"
+	"os"
+	"strconv"
+	"strings"
 	"time"
 
 	"periph.io/x/conn/v3/i2c"
@@ -63,35 +67,61 @@ func InitRele() {
 
 }
 
-func OvladanieRele() {
+// ********************************************************
+// Skúška funkčnosti relé na doske - individuálne zopnutie
+// podľ stlačeného čísla od 0 do 7
+// ********************************************************
+func TestReleIndividual() {
 
-	for j := 0; j < 2; j++ {
+	var arr = [8]byte{1, 4, 64, 16, 32, 128, 8, 2} // Pole s 8 prvkami - čísla reprezentujú relé od 1 po 8
 
-		var arr = [8]byte{1, 4, 64, 16, 32, 128, 8, 2} // Pole s 8 prvkami
+	reader := bufio.NewReader(os.Stdin)
 
-		for i := 0; i < 8; i++ {
-
-			var rele byte = arr[i]
-			fmt.Println("Relé", i+1)
-			// Zapni relé
-			if err := toggleRelay(&device, true, rele); err != nil { //jojco: err má vždy návratovú chybu rôznu od 0=nil; ak nie je chyba, tak je nil
-				log.Fatal(err)
-			}
-
-			// Počkajte 2 sekúnd
-			time.Sleep(1 * time.Second)
-
-			// Vypni relé
-			if err := toggleRelay(&device, false, 0); err != nil {
-				log.Fatal(err)
-			}
-
-			// Počkajte 2 sekúnd
-			time.Sleep(1 * time.Second)
-
-		}
-		i2cAddress = i2cAddress + 1
+	// Vyber číslo dosky
+	fmt.Print("Zadaj číslo dosky (0-1): ")
+	boardInput, _ := reader.ReadString('\n')
+	boardInput = strings.TrimSpace(boardInput)
+	boardNum, err := strconv.Atoi(boardInput)
+	if err != nil || boardNum < 0 || boardNum > 1 {
+		log.Fatal("Neplatné číslo dosky. Zadaj 0 alebo 1.")
 	}
+
+	// Nastav adresu I2C na základe výberu dosky.
+	switch boardNum {
+	case 0:
+		i2cAddress = i2cAddress + 0 // Príklad základnej adresy pre dosku 0
+	case 1:
+		i2cAddress = i2cAddress + 1 // Príklad adresy pre dosku 1
+	}
+	fmt.Printf("Používam I2C adresu: 0x%02X\n", i2cAddress)
+
+	fmt.Print("Zadaj číslo relé (0-7): ")
+	input, _ := reader.ReadString('\n')
+	input = strings.TrimSpace(input)
+
+	i, err := strconv.Atoi(input)
+	if err != nil || i < 0 || i > 7 {
+		log.Fatal("Neplatné číslo relé. Zadaj číslo od 0 do 7.")
+	}
+
+	var rele byte = arr[i]
+	fmt.Println("Relé", i+1)
+	// Zapni relé
+	if err := toggleRelay(&device, true, rele); err != nil {
+		log.Fatal(err)
+	}
+
+	// Počkajte 2 sekúnd
+	time.Sleep(1 * time.Second)
+
+	// Vypni relé
+	if err := toggleRelay(&device, false, 0); err != nil {
+		log.Fatal(err)
+	}
+
+	// Počkajte 2 sekúnd
+	time.Sleep(1 * time.Second)
+
 }
 
 func toggleRelay(device *i2c.Dev, state bool, ktorerele byte) error {
@@ -114,7 +144,11 @@ func toggleRelay(device *i2c.Dev, state bool, ktorerele byte) error {
 	return nil
 }
 
-func TestRele() {
+// ********************************************************
+// Skúška funkčnosti všetkých relé na doskách
+// postupne zapína relé od 1 do 8 na dvoch doskách
+// ********************************************************
+func TestReleAll() {
 
 	for j := 0; j < 2; j++ {
 
