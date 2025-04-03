@@ -7,6 +7,7 @@ toolchain go1.23.4
 require (
 	github.com/eiannone/keyboard v0.0.0-20220611211555-0d226195f203
 	github.com/pvainio/scd30 v0.0.3
+	github.com/stianeikeland/go-rpio v4.2.0+incompatible
 	github.com/stianeikeland/go-rpio/v4 v4.6.0
 	periph.io/x/conn/v3 v3.7.1
 	periph.io/x/host/v3 v3.8.3

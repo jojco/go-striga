@@ -74,18 +74,20 @@ func main() {
 // ***********************************************************************
 // Načítanie údajov zo senzorov	a uloženie do databáz
 // ***********************************************************************
+
 func nacitanieUdajov() {
-	fmt.Println("Spustená funkcia načítania údajov")
+	fmt.Println("Spustená funkcia načítania údajov z SCD30")
 	co2, vlhkost, teplota := pkg2.Udajezscd30()
 	fmt.Printf("CO2: %f, Vlhkosť: %f, Teplota: %f\n", co2, vlhkost, teplota)
 
 	// Volanie funkcie ReadTemperature a uloženie do databázy
+	fmt.Println("Spustená funkcia načítania údajov z teplomerov na I2C")
 	location := "t1UK"
-	temperatureData, err := pkg3.ReadTemperature(location)
+	sensorid, temperature, timestamp, err := pkg3.ReadTemperature(location)
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	fmt.Printf("Location:%v, SensorID: %v, Teplota: %f, Time: %s\n", location, sensorid, temperature, timestamp)
 	// Otvorenie alebo vytvorenie databázy SQLite3
 	db, err := sql.Open("sqlite3", "./w1.db")
 	if err != nil {
@@ -106,9 +108,9 @@ func nacitanieUdajov() {
 	}
 	// Vloženie dát do databázy
 	_, err = db.Exec(`
-				INSERT INTO temperatures (sensor_id, location, temperature, timestamp)
+				INSERT INTO temperatures (sensorid, location, temperature, timestamp)
 				VALUES (?, ?, ?, ?);
-		`, temperatureData.SensorID, temperatureData.Location, temperatureData.Temperature, temperatureData.Timestamp)
+		`, sensorid, location, temperature, timestamp)
 
 	if err != nil {
 		log.Fatal(err)

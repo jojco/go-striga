@@ -27,13 +27,6 @@ type Config struct {
 	Devices []W1Device `json:"devices"`
 }
 
-type TemperatureData struct {
-	SensorID    string
-	Location    string
-	Temperature float32
-	Timestamp   time.Time
-}
-
 // ************************************************************
 // vytvorenie databázy teplomerov na rýchly prístup
 // ************************************************************
@@ -104,17 +97,12 @@ func loadConfig(filename string) (Config, error) {
 // ********************************************************************
 // readTemperature reads the temperature from the specified w1 device
 // ********************************************************************
-func ReadTemperature(location string) (TemperatureData, error) {
+
+func ReadTemperature(location string) (string, float32, time.Time, error) {
 
 	//return tempValue / 1000.0, nil
 
-	return TemperatureData{
-		SensorID:    "28-44444444",
-		Location:    "t1UK",
-		Temperature: 55.0,
-		Timestamp:   time.Now(),
-	}, nil
-
+	return "28-44444444", 55.0, time.Now(), nil
 }
 
 // ***************************************************************
