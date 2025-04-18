@@ -1,0 +1,101 @@
+{
+    "relays": [
+      {
+        "releid": "rele1",
+        "relecode": "0x01",
+        "whatcontrol": "cerpadloUK",
+        "board": "0x26"
+      },
+      {
+        "releid": "rele2",
+        "relecode": "0x04",
+        "whatcontrol": "spirala6kwAKU",
+        "board": "0x26" 
+      },
+      {
+        "releid": "rele3",
+        "relecode": "0x40",
+        "whatcontrol": "spirala2kwAKU",
+        "board": "0x26" 
+      },
+      {
+        "releid": "rele4",
+        "relecode": "0x10",
+        "whatcontrol": "cerpadloTUV",
+        "board": "0x26"
+      },
+      {
+        "releid": "rele5",
+        "relecode": "0x20",
+        "whatcontrol": "cerpadloAKU",
+        "board": "0x26" 
+      },
+      {
+        "releid": "rele6",
+        "relecode": "0x80",
+        "whatcontrol": "ventilUKOtvor",
+        "board": "0x26" 
+      },
+      {
+        "releid": "rele7",
+        "relecode": "0x08",
+        "whatcontrol": "ventilUKZatvor",
+        "board": "0x26" 
+      },
+      {
+        "releid": "rele8",
+        "relecode": "0x02",
+        "whatcontrol": "spiralaBojler",
+        "board": "0x26" 
+      },
+      {
+        "releid": "rele9",
+        "relecode": "0x01",
+        "whatcontrol": "cirkulaciaTUV",
+        "board": "0x27"
+      },
+      {
+        "releid": "rele10",
+        "relecode": "0x04",
+        "whatcontrol": "cerpadloAkuDoBojler",
+        "board": "0x27" 
+      },
+      {
+        "releid": "rele11",
+        "relecode": "0x40",
+        "whatcontrol": "dopln23",
+        "board": "0x27" 
+      },
+      {
+        "releid": "rele12",
+        "relecode": "0x10",
+        "whatcontrol": "dopln24",
+        "board": "0x27"
+      },
+      {
+        "releid": "rele13",
+        "relecode": "0x20",
+        "whatcontrol": "dopln25",
+        "board": "0x27" 
+      },
+      {
+        "releid": "rele14",
+        "relecode": "0x80",
+        "whatcontrol": "dopln26",
+        "board": "0x27" 
+      },
+      {
+        "releid": "rele15",
+        "relecode": "0x08",
+        "whatcontrol": "dopln27",
+        "board": "0x27" 
+      },
+      {
+        "releid": "rele16",
+        "relecode": "0x02",
+        "whatcontrol": "dopln28",
+        "board": "0x27" 
+      }
+    ]
+  }
+

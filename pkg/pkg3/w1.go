@@ -100,8 +100,6 @@ func loadConfig(filename string) (Config, error) {
 
 func ReadTemperature(location string) (string, float32, time.Time, error) {
 
-	//return tempValue / 1000.0, nil
-
 	return "28-44444444", 55.0, time.Now(), nil
 }
 

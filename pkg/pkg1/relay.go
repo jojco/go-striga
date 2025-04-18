@@ -42,6 +42,17 @@ import (
 var i2cAddress uint16 = 0x26 // Adresa I2C zariadenia nastavená na 0x26 HEXA t.j. 38 DEC
 var device i2c.Dev
 
+type ReleOnBoards struct {
+	ReleID      string `json:"releid"`
+	ReleCode    string `json:"relecode"`
+	WhatControl string `json:"whatcontrol"` // čo relé ovláda
+	Board       byte   `json:"board"`       //adresa dosky 0x26, 0x27,...(nastav na doske)
+}
+
+type Config struct {
+	Relays []ReleOnBoards `json:"relays"`
+}
+
 //const bus = 0x01
 
 func InitRele() {
