@@ -30,7 +30,7 @@ type Config struct {
 // ************************************************************
 // vytvorenie databázy teplomerov na rýchly prístup
 // ************************************************************
-func VytvorDBTeplomery() {
+func InitTeplomery() {
 	//Načítanie zoznamu teplomerov zo súboru json do databázy
 	config, err := loadConfig("config_w1.json")
 	if err != nil {

@@ -22,8 +22,8 @@ import (
 func main() {
 
 	//Inicializácia modulov
-	pkg1.InitRele()          //načítanie súboru config_rele.json a uloženie do databázy
-	pkg3.VytvorDBTeplomery() //načítanie súboru config_w1.json a uloženie údajov do databázy
+	pkg1.InitRele()      //načítanie súboru config_rele.json a uloženie do databázy
+	pkg3.InitTeplomery() //načítanie súboru config_w1.json a uloženie údajov do databázy
 
 	//Táto časť má umožniť
 	//za behu programu spustiť servisný mód stlačením S
@@ -132,7 +132,8 @@ func vykurovanieUK() {
 }
 func pripravaTeplejVodyTUV() {
 	fmt.Println("Modul TUV")
-	time.Sleep(2 * time.Second) // Simulácia práce v module TUV
+	time.Sleep(2 * time.Second)      // Simulácia práce v module TUV
+	pkg1.ZapniRele("rele4", "zapni") // cirkulacne cerpadlo TUV
 }
 func akumulacia() {
 	fmt.Println("Modul AKU")

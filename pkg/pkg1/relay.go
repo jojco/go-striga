@@ -2,6 +2,8 @@ package pkg1
 
 import (
 	"bufio"
+	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -44,9 +46,9 @@ var device i2c.Dev
 
 type ReleOnBoards struct {
 	ReleID      string `json:"releid"`
-	ReleCode    string `json:"relecode"`
+	ReleCode    string `json:"relecode"`    // kodované číslo relé v hexa
 	WhatControl string `json:"whatcontrol"` // čo relé ovláda
-	Board       byte   `json:"board"`       //adresa dosky 0x26, 0x27,...(nastav na doske)
+	Board       string `json:"board"`       //adresa dosky 0x26, 0x27,...(nastav na doske)
 }
 
 type Config struct {
@@ -80,6 +82,80 @@ func InitRele() {
 	device.Write([]byte{0x03, 0})
 	fmt.Println("registre zariadenia sú vymazané", device)
 
+	//Načítanie zoznamu teplomerov zo súboru json do databázy
+	config, err := loadConfig("config_relays.json")
+	if err != nil {
+		fmt.Println("Chyba pri načítaní konfigurácie rele:", err)
+		return
+	}
+	// Tlač obsahu súboru config_w1.json
+	for _, device := range config.Relays {
+		fmt.Println("obsah súboru config_relays.json") //
+		fmt.Println("ReleID :", device.ReleID)
+		fmt.Println("ReleCode:", device.ReleCode)
+		fmt.Println("WhatControl:", device.WhatControl)
+		fmt.Println("Board:", device.Board)
+		fmt.Println("---") // Oddeľovač pre lepšiu čitateľnosť
+
+	}
+	// Otvorenie alebo vytvorenie databázy SQLite3
+	db, err := sql.Open("sqlite3", "./config_relays.db")
+	if err != nil {
+		log.Fatalf("Chyba pri otvorení databázy: %v", err)
+	}
+	//defer db.Close() // zabezpečí zatvorenie db po ukončení funkcie ale ja chcem aby bola prístupná počas chodu programu
+	// Vytvorenie tabuľky, ak neexistuje
+	_, err = db.Exec(`
+			CREATE TABLE IF NOT EXISTS config_relays (
+					releid TEXT,
+					relecode TEXT,
+					whatcontrol TEXT,
+					board BYTE
+			)
+	`)
+
+	if err != nil {
+		log.Fatalf("Chyba pri vytváraní tabuľky: %v", err)
+	}
+
+	// Vloženie dát z JSON do databázy
+	for _, device := range config.Relays {
+		_, err = db.Exec(
+			"INSERT INTO config_relays (releid, relecode, whatcontrol, board) VALUES (?, ?, ?, ?)",
+			device.ReleID, device.ReleCode, device.WhatControl, device.Board,
+		)
+		if err != nil {
+			log.Printf("Chyba pri vkladaní dát: %v", err)
+		}
+	}
+
+	fmt.Println("Dáta o relé sú úspešne uložené do databázy.")
+
+}
+
+func loadConfig(filename string) (Config, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return Config{}, err
+	}
+	defer file.Close()
+
+	var config Config
+	decoder := json.NewDecoder(file)
+	err = decoder.Decode(&config)
+	if err != nil {
+		return Config{}, err
+	}
+	return config, nil
+}
+
+// **************************************************************
+// Zapínanie príslušného relé - hlavný program
+// **************************************************************
+func ZapniRele(releid string, stav string) error {
+	fmt.Println("ReleID :", releid)
+	fmt.Println("Stav rele :", stav)
+	return nil
 }
 
 // ********************************************************
