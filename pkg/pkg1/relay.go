@@ -130,7 +130,8 @@ func InitRele() {
 	}
 
 	fmt.Println("Dáta o relé sú úspešne uložené do databázy.")
-
+	fmt.Println("---") // Oddeľovač pre lepšiu čitateľnosť
+	fmt.Println("")    // Oddeľovač pre lepšiu čitateľnosť
 }
 
 func loadConfig(filename string) (Config, error) {

@@ -4,7 +4,7 @@
 package main
 
 import (
-	"database/sql"
+	//"database/sql"
 	"fmt"
 	"log"
 	"time"
@@ -15,8 +15,8 @@ import (
 	"github.com/jojco/go-striga/pkg/pkg1"
 	"github.com/jojco/go-striga/pkg/pkg2"
 	"github.com/jojco/go-striga/pkg/pkg3"
-	"github.com/jojco/go-striga/pkg/pkg4"
-	webserver "github.com/jojco/go-striga/web"
+	//"github.com/jojco/go-striga/pkg/pkg4"
+	//webserver "github.com/jojco/go-striga/web"
 )
 
 func main() {
@@ -89,7 +89,7 @@ func nacitanieUdajov() {
 	}
 	fmt.Printf("Location:%v, SensorID: %v, Teplota: %f, Time: %s\n", location, sensorid, temperature, timestamp)
 	// Otvorenie alebo vytvorenie databázy SQLite3
-	db, err := sql.Open("sqlite3", "./w1.db")
+	/*db, err := sql.Open("sqlite3", "./teploty.db")
 	if err != nil {
 		log.Fatalf("Chyba pri otvorení databázy: %v", err)
 	}
@@ -97,10 +97,11 @@ func nacitanieUdajov() {
 
 	// Vytvorenie tabuľky, ak neexistuje
 	_, err = db.Exec(`
-	 	CREATE TABLE IF NOT EXISTS w1 (
-			 sensorid TEXT PRIMARY KEY,
-			 path TEXT,
-			 location TEXT
+	 	CREATE TABLE IF NOT EXISTS teploty (
+			 location TEXT,
+			 sensorid TEXT,
+			 temperature REAL,
+			 timestamp DATETIME
 	 	)
 	`)
 	if err != nil {
@@ -120,7 +121,7 @@ func nacitanieUdajov() {
 
 	webserver.Webserverstriga()
 	pkg4.DInput()
-
+	*/
 }
 
 // ***********************************************************************
