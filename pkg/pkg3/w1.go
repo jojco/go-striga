@@ -3,7 +3,6 @@ package pkg3
 // Zoznam teplomerov a umiestnenie je v súbore configw1.json
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -45,39 +44,11 @@ func InitTeplomery() {
 		fmt.Println("Location:", device.Location)
 		fmt.Println("---") // Oddeľovač pre lepšiu čitateľnosť
 	}
-	// Otvorenie alebo vytvorenie databázy SQLite3
-	db, err := sql.Open("sqlite3", "./config_w1.db")
-	if err != nil {
-		log.Fatalf("Chyba pri otvorení databázy: %v", err)
-	}
-	//defer db.Close() // zabezpečí zatvorenie db po ukončení funkcie ale ja chcem aby bola prístupná počas chodu programu
-	// Vytvorenie tabuľky, ak neexistuje
-	_, err = db.Exec(`
-			CREATE TABLE IF NOT EXISTS config_w1 (
-					sensorid TEXT,
-					path TEXT,
-					location TEXT
-			)
-	`)
-
-	if err != nil {
-		log.Fatalf("Chyba pri vytváraní tabuľky: %v", err)
-	}
-	// Vloženie dát z JSON do databázy
-	for _, device := range config.Devices {
-		_, err = db.Exec(
-			"INSERT INTO config_w1 (sensorid, path, location) VALUES (?, ?, ?)",
-			device.SensorID, device.Path, device.Location,
-		)
-		if err != nil {
-			log.Printf("Chyba pri vkladaní dát: %v", err)
-		}
-	}
-
-	fmt.Println("Dáta úspešne uložené do databázy.")
-
 }
 
+// ***********************************************************************
+// Funkcia na čítanie z konfiguračných súborov
+// ***********************************************************************
 func loadConfig(filename string) (Config, error) {
 	file, err := os.Open(filename)
 	if err != nil {

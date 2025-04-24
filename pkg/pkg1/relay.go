@@ -2,7 +2,7 @@ package pkg1
 
 import (
 	"bufio"
-	"database/sql"
+
 	"encoding/json"
 	"fmt"
 	"log"
@@ -98,42 +98,21 @@ func InitRele() {
 		fmt.Println("---") // Oddeľovač pre lepšiu čitateľnosť
 
 	}
-	// Otvorenie alebo vytvorenie databázy SQLite3
-	db, err := sql.Open("sqlite3", "./config_relays.db")
-	if err != nil {
-		log.Fatalf("Chyba pri otvorení databázy: %v", err)
-	}
-	//defer db.Close() // zabezpečí zatvorenie db po ukončení funkcie ale ja chcem aby bola prístupná počas chodu programu
-	// Vytvorenie tabuľky, ak neexistuje
-	_, err = db.Exec(`
-			CREATE TABLE IF NOT EXISTS config_relays (
-					releid TEXT,
-					relecode TEXT,
-					whatcontrol TEXT,
-					board BYTE
-			)
-	`)
 
-	if err != nil {
-		log.Fatalf("Chyba pri vytváraní tabuľky: %v", err)
-	}
-
-	// Vloženie dát z JSON do databázy
-	for _, device := range config.Relays {
-		_, err = db.Exec(
-			"INSERT INTO config_relays (releid, relecode, whatcontrol, board) VALUES (?, ?, ?, ?)",
-			device.ReleID, device.ReleCode, device.WhatControl, device.Board,
-		)
-		if err != nil {
-			log.Printf("Chyba pri vkladaní dát: %v", err)
-		}
-	}
-
-	fmt.Println("Dáta o relé sú úspešne uložené do databázy.")
-	fmt.Println("---") // Oddeľovač pre lepšiu čitateľnosť
-	fmt.Println("")    // Oddeľovač pre lepšiu čitateľnosť
 }
 
+// **************************************************************
+// Zapínanie príslušného relé - hlavný program
+// **************************************************************
+func ZapniRele(releid string, stav string) error {
+	fmt.Println("ReleID :", releid)
+	fmt.Println("Stav rele :", stav)
+	return nil
+}
+
+// ***********************************************************************
+// Funkcia na čítanie z konfiguračných súborov
+// ***********************************************************************
 func loadConfig(filename string) (Config, error) {
 	file, err := os.Open(filename)
 	if err != nil {
@@ -148,15 +127,6 @@ func loadConfig(filename string) (Config, error) {
 		return Config{}, err
 	}
 	return config, nil
-}
-
-// **************************************************************
-// Zapínanie príslušného relé - hlavný program
-// **************************************************************
-func ZapniRele(releid string, stav string) error {
-	fmt.Println("ReleID :", releid)
-	fmt.Println("Stav rele :", stav)
-	return nil
 }
 
 // ********************************************************
@@ -273,7 +243,6 @@ func TestReleAll() {
 
 // ********************************************************
 // Knihovňa na ovládanie RELE cez RPIO
-//
 // ********************************************************
 
 const relayPin = 17 // GPIO pin na Raspberry Pi, ktorý ovláda relé (môžeš zmeniť podľa potreby)
@@ -308,3 +277,16 @@ func TurnRelayOff() {
 func CloseRelay() {
 	rpio.Close()
 }
+
+/* poznamka
+// Vloženie dát z JSON do databázy
+		for _, device := range config.Relays {
+			_, err = db.Exec(
+				"INSERT INTO config_relays (releid, relecode, whatcontrol, board) VALUES (?, ?, ?, ?)",
+				device.ReleID, device.ReleCode, device.WhatControl, device.Board,
+			)
+			if err != nil {
+				log.Printf("Chyba pri vkladaní dát: %v", err)
+			}
+		}
+*/

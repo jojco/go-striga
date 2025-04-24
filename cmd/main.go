@@ -4,7 +4,7 @@
 package main
 
 import (
-	//"database/sql"
+	"database/sql"
 	"fmt"
 	"log"
 	"time"
@@ -22,8 +22,8 @@ import (
 func main() {
 
 	//Inicializácia modulov
-	pkg1.InitRele()      //načítanie súboru config_rele.json a uloženie do databázy
-	pkg3.InitTeplomery() //načítanie súboru config_w1.json a uloženie údajov do databázy
+	pkg1.InitRele()      //inicializácia rel
+	pkg3.InitTeplomery() //inicializácia teplomerov
 
 	//Táto časť má umožniť
 	//za behu programu spustiť servisný mód stlačením S
@@ -72,56 +72,46 @@ func main() {
 }
 
 // ***********************************************************************
-// Načítanie údajov zo senzorov	a uloženie do databáz
+// Načítanie údajov zo senzorov	a uloženie do databázy
 // ***********************************************************************
 
 func nacitanieUdajov() {
+	//  Otvorenie alebo vytvorenie databázy SQLite3
+	db, err := sql.Open("sqlite3", "./striga.db")
+	if err != nil {
+		log.Fatalf("Chyba pri otvorení databázy: %v", err)
+	}
+	defer db.Close() // zabezpečí zatvorenie db po ukončení funkcie
+	// Vytvorenie tabuľky, ak neexistuje
+	_, err = db.Exec(`
+			CREATE TABLE IF NOT EXISTS striga (
+					miesto TEXT,
+					hodnota float32,
+					cas time.Time
+			)
+	`)
+
+	if err != nil {
+		log.Fatalf("Chyba pri vytváraní tabuľky: %v", err)
+	}
+
+	// Volanie funkcie na načítanie údajov z SCD30
 	fmt.Println("Spustená funkcia načítania údajov z SCD30")
 	co2, vlhkost, teplota := pkg2.Udajezscd30()
 	fmt.Printf("CO2: %f, Vlhkosť: %f, Teplota: %f\n", co2, vlhkost, teplota)
 
-	// Volanie funkcie ReadTemperature a uloženie do databázy
-	fmt.Println("Spustená funkcia načítania údajov z teplomerov na I2C")
+	// Volanie funkcie na čítanie hodnôt z teplomerov
+	fmt.Println("Spustená funkcia načítania údajov z teplomerov na 1WIRE / I2C")
 	location := "t1UK"
 	sensorid, temperature, timestamp, err := pkg3.ReadTemperature(location)
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Printf("Location:%v, SensorID: %v, Teplota: %f, Time: %s\n", location, sensorid, temperature, timestamp)
-	// Otvorenie alebo vytvorenie databázy SQLite3
-	/*db, err := sql.Open("sqlite3", "./teploty.db")
-	if err != nil {
-		log.Fatalf("Chyba pri otvorení databázy: %v", err)
-	}
-	defer db.Close()
 
-	// Vytvorenie tabuľky, ak neexistuje
-	_, err = db.Exec(`
-	 	CREATE TABLE IF NOT EXISTS teploty (
-			 location TEXT,
-			 sensorid TEXT,
-			 temperature REAL,
-			 timestamp DATETIME
-	 	)
-	`)
-	if err != nil {
-		log.Fatalf("Chyba pri vytváraní tabuľky: %v", err)
-	}
-	// Vloženie dát do databázy
-	_, err = db.Exec(`
-				INSERT INTO temperatures (sensorid, location, temperature, timestamp)
-				VALUES (?, ?, ?, ?);
-		`, sensorid, location, temperature, timestamp)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println("Data inserted successfully")
-
-	webserver.Webserverstriga()
-	pkg4.DInput()
-	*/
+	fmt.Println("Dáta sú úspešne uložené do databázy.")
+	fmt.Println("---") // Oddeľovač pre lepšiu čitateľnosť
+	fmt.Println("")    // Oddeľovač pre lepšiu čitateľnosť
 }
 
 // ***********************************************************************
